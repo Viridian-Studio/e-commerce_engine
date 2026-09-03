@@ -52,6 +52,10 @@ export class StoresService {
       const existing = await this.storeModel.findById(id).select('payment').lean().exec();
       update.payment = { ...(existing?.payment ?? {}), ...dto.payment };
     }
+    if (dto.seo) {
+      const existing = await this.storeModel.findById(id).select('seo').lean().exec();
+      update.seo = { ...(existing?.seo ?? {}), ...dto.seo };
+    }
     const store = await this.storeModel.findByIdAndUpdate(id, update, { new: true }).exec();
     if (!store) throw new NotFoundException('Store not found');
     return store.toJSON<StoreType>();

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
-import { StoreStatus, StoreThemeConfig, StorePaymentConfig } from '@ecom/types';
+import { StoreStatus, StoreThemeConfig, StorePaymentConfig, StoreSeoConfig } from '@ecom/types';
 
 @Schema({ _id: true, timestamps: true })
 export class Store {
@@ -65,6 +65,17 @@ export class Store {
     default: {},
   })
   payment: StorePaymentConfig;
+
+  @Prop({
+    type: {
+      metaTitle: { type: String },
+      metaDescription: { type: String },
+      ogImageUrl: { type: String },
+      keywords: { type: [String] },
+    },
+    default: {},
+  })
+  seo: StoreSeoConfig;
 
   @Prop({ type: Object, default: {} })
   settings: Record<string, unknown>;

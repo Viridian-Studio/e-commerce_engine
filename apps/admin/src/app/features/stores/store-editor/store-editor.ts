@@ -21,7 +21,7 @@ const FONT_PRESETS: { label: string; value: string }[] = [
   { label: 'Source Code Pro (mono)', value: "'Source Code Pro', monospace" },
 ];
 
-type Tab = 'general' | 'appearance' | 'announcement' | 'payments';
+type Tab = 'general' | 'appearance' | 'announcement' | 'payments' | 'seo';
 
 interface StoreForm {
   name: string;
@@ -36,6 +36,7 @@ interface StoreForm {
   primaryColor: string;
   accentColor: string;
   logoUrl: string;
+  faviconUrl: string;
   appearance: StoreAppearance;
   fontFamily: string;
   headingFontFamily: string;
@@ -49,6 +50,11 @@ interface StoreForm {
   stripeSecretKey: string;
   stripePublishableKey: string;
   stripeWebhookSecret: string;
+  // SEO
+  seoMetaTitle: string;
+  seoMetaDescription: string;
+  seoOgImageUrl: string;
+  seoKeywords: string;
 }
 
 function emptyForm(): StoreForm {
@@ -64,6 +70,7 @@ function emptyForm(): StoreForm {
     primaryColor: '#6366f1',
     accentColor: '#111111',
     logoUrl: '',
+    faviconUrl: '',
     appearance: 'dark',
     fontFamily: '',
     headingFontFamily: '',
@@ -75,6 +82,10 @@ function emptyForm(): StoreForm {
     stripeSecretKey: '',
     stripePublishableKey: '',
     stripeWebhookSecret: '',
+    seoMetaTitle: '',
+    seoMetaDescription: '',
+    seoOgImageUrl: '',
+    seoKeywords: '',
   };
 }
 
@@ -150,6 +161,7 @@ export class StoreEditor {
         primaryColor: s.theme.primaryColor ?? '#6366f1',
         accentColor: s.theme.accentColor ?? '#111111',
         logoUrl: s.theme.logoUrl ?? '',
+        faviconUrl: s.theme.faviconUrl ?? '',
         appearance: s.theme.appearance ?? 'dark',
         fontFamily: s.theme.fontFamily ?? '',
         headingFontFamily: s.theme.headingFontFamily ?? '',
@@ -161,6 +173,10 @@ export class StoreEditor {
         stripeSecretKey: s.payment?.stripeSecretKey ?? '',
         stripePublishableKey: s.payment?.stripePublishableKey ?? '',
         stripeWebhookSecret: s.payment?.stripeWebhookSecret ?? '',
+        seoMetaTitle: s.seo?.metaTitle ?? '',
+        seoMetaDescription: s.seo?.metaDescription ?? '',
+        seoOgImageUrl: s.seo?.ogImageUrl ?? '',
+        seoKeywords: s.seo?.keywords?.join(', ') ?? '',
       });
     } catch (err) {
       this.notifications.error(extractErrorMessage(err));
@@ -191,6 +207,7 @@ export class StoreEditor {
           primaryColor: f.primaryColor || undefined,
           accentColor: f.accentColor || undefined,
           logoUrl: f.logoUrl || undefined,
+          faviconUrl: f.faviconUrl || undefined,
           appearance: f.appearance,
           fontFamily: f.fontFamily || undefined,
           headingFontFamily: f.headingFontFamily || undefined,
@@ -206,6 +223,12 @@ export class StoreEditor {
           stripeSecretKey: f.stripeSecretKey || undefined,
           stripePublishableKey: f.stripePublishableKey || undefined,
           stripeWebhookSecret: f.stripeWebhookSecret || undefined,
+        },
+        seo: {
+          metaTitle: f.seoMetaTitle || undefined,
+          metaDescription: f.seoMetaDescription || undefined,
+          ogImageUrl: f.seoOgImageUrl || undefined,
+          keywords: f.seoKeywords ? f.seoKeywords.split(',').map((k) => k.trim()).filter(Boolean) : undefined,
         },
       };
       if (this.isNew()) {

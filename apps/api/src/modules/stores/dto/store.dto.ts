@@ -66,6 +66,16 @@ export class CreateStoreDto {
     stripePublishableKey?: string;
     stripeWebhookSecret?: string;
   };
+
+  @ApiPropertyOptional({ description: 'Store-level SEO defaults: meta title, description, OG image, keywords' })
+  @IsOptional()
+  @IsObject()
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    ogImageUrl?: string;
+    keywords?: string[];
+  };
 }
 
 export class UpdateStoreDto extends PartialType(CreateStoreDto) {}

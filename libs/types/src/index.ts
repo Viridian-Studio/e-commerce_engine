@@ -188,6 +188,22 @@ export interface StorePaymentConfig {
   stripeWebhookSecret?: string;
 }
 
+/**
+ * Store-level SEO defaults. Applied to the storefront's `<title>` and
+ * `<meta name="description">` on initial load; individual pages (products,
+ * categories) may override them with their own `seo` fields.
+ */
+export interface StoreSeoConfig {
+  /** Browser tab title and default OG title. Falls back to the store name. */
+  metaTitle?: string;
+  /** Default meta description / OG description. */
+  metaDescription?: string;
+  /** Default OG image URL. */
+  ogImageUrl?: string;
+  /** Comma-separated keywords (meta keywords tag). */
+  keywords?: string[];
+}
+
 export interface Store {
   _id: ID;
   name: string;
@@ -200,6 +216,7 @@ export interface Store {
   contactEmail?: string;
   theme: StoreThemeConfig;
   payment: StorePaymentConfig;
+  seo?: StoreSeoConfig;
   settings: Record<string, unknown>;
   createdAt: ISODate;
   updatedAt: ISODate;

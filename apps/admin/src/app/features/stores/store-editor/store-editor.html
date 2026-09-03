@@ -53,6 +53,15 @@
           [class.border-transparent]="activeTab() !== 'payments'"
           (click)="activeTab.set('payments')"
         >Payments</button>
+        <button
+          type="button"
+          class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          [class.border-(--color-brand)]="activeTab() === 'seo'"
+          [class.text-(--color-text)]="activeTab() === 'seo'"
+          [class.text-(--color-text-muted)]="activeTab() !== 'seo'"
+          [class.border-transparent]="activeTab() !== 'seo'"
+          (click)="activeTab.set('seo')"
+        >SEO</button>
       </div>
 
       <!-- Tab content -->
@@ -193,9 +202,21 @@
           <!-- Logo -->
           <div>
             <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Logo & favicon</p>
-            <div>
-              <label class="label">Logo URL</label>
-              <input type="text" class="input" placeholder="https://..." [ngModel]="form().logoUrl" (ngModelChange)="patch({ logoUrl: $event })" />
+            <div class="space-y-4">
+              <div>
+                <label class="label">Logo URL</label>
+                <input type="text" class="input" placeholder="https://..." [ngModel]="form().logoUrl" (ngModelChange)="patch({ logoUrl: $event })" />
+              </div>
+              <div>
+                <label class="label">Favicon URL</label>
+                <input type="text" class="input" placeholder="https://.../favicon.ico" [ngModel]="form().faviconUrl" (ngModelChange)="patch({ faviconUrl: $event })" />
+                @if (form().faviconUrl) {
+                  <div class="mt-2 flex items-center gap-2 text-xs text-(--color-text-muted)">
+                    <img [src]="form().faviconUrl" alt="Favicon preview" class="h-4 w-4 rounded-sm border border-(--color-border)" />
+                    <span>Preview</span>
+                  </div>
+                }
+              </div>
             </div>
           </div>
         }
@@ -272,6 +293,43 @@
             <div>
               <label class="label">Webhook secret</label>
               <input type="text" class="input font-mono text-xs" placeholder="whsec_..." [ngModel]="form().stripeWebhookSecret" (ngModelChange)="patch({ stripeWebhookSecret: $event })" autocomplete="off" />
+            </div>
+          </div>
+        }
+
+        <!-- SEO -->
+        @if (activeTab() === 'seo') {
+          <div class="mb-4 rounded-lg bg-(--color-surface-2) px-4 py-3 text-xs text-(--color-text-muted)">
+            Default SEO metadata applied to the storefront. Individual pages (products, categories) override these with their own values.
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="label">Meta title <span class="text-(--color-text-faint)">(defaults to store name)</span></label>
+              <input type="text" class="input" placeholder="Ultras Shop — Premium Streetwear" [ngModel]="form().seoMetaTitle" (ngModelChange)="patch({ seoMetaTitle: $event })" />
+              <p class="mt-1 text-xs text-(--color-text-faint)">{{ form().seoMetaTitle.length }}/60 characters</p>
+            </div>
+            <div>
+              <label class="label">Meta description</label>
+              <textarea class="input" rows="3" placeholder="Premium streetwear for real fans. Worldwide shipping, 14-day returns." [ngModel]="form().seoMetaDescription" (ngModelChange)="patch({ seoMetaDescription: $event })"></textarea>
+              <p class="mt-1 text-xs text-(--color-text-faint)">{{ form().seoMetaDescription.length }}/160 characters</p>
+            </div>
+            <div>
+              <label class="label">OG image URL <span class="text-(--color-text-faint)">(social share thumbnail)</span></label>
+              <input type="text" class="input" placeholder="https://.../og-image.jpg" [ngModel]="form().seoOgImageUrl" (ngModelChange)="patch({ seoOgImageUrl: $event })" />
+            </div>
+            <div>
+              <label class="label">Keywords <span class="text-(--color-text-faint)">(comma-separated)</span></label>
+              <input type="text" class="input" placeholder="streetwear, urban fashion, premium clothing" [ngModel]="form().seoKeywords" (ngModelChange)="patch({ seoKeywords: $event })" />
+            </div>
+
+            <!-- SERP preview -->
+            <div class="border-t border-(--color-border) pt-4">
+              <p class="label">Search preview</p>
+              <div class="rounded-lg border border-(--color-border) bg-white px-4 py-3">
+                <p class="text-[18px] leading-snug text-[#1a0dab]">{{ form().seoMetaTitle || form().name || 'Store name' }}</p>
+                <p class="text-[13px] leading-snug text-[#006621]">https://{{ form().domain || 'your-store.com' }}</p>
+                <p class="text-[13px] leading-snug text-[#545454]">{{ form().seoMetaDescription || 'No description set — the search engine will generate one from page content.' }}</p>
+              </div>
             </div>
           </div>
         }

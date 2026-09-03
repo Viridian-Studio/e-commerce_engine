@@ -28,6 +28,7 @@ export class StoreService {
       )
         .then((store) => {
           this.store.set(store);
+          if (store) this.applySeo(store);
         })
         .catch((err) => {
           console.error('Failed to resolve store', err);
@@ -35,5 +36,42 @@ export class StoreService {
         .finally(() => this.loaded.set(true));
     }
     return this.loadPromise;
+  }
+
+  /**
+   * Applies the store-level SEO defaults to the document: `<title>`,
+   * `<meta name="description">`, `<meta name="keywords">`, and OG tags.
+   * Individual pages may override these later with their own `seo` fields.
+   */
+  private applySeo(store: Store): void {
+    const seo = store.seo;
+    document.title = seo?.metaTitle || store.name;
+
+    this.setMeta('description', seo?.metaDescription);
+    this.setMeta('keywords', seo?.keywords?.join(', '));
+
+    // Open Graph tags
+    this.setMeta('og:title', seo?.metaTitle || store.name, true);
+    this.setMeta('og:description', seo?.metaDescription, true);
+    this.setMeta('og:image', seo?.ogImageUrl, true);
+    this.setMeta('og:site_name', store.name, true);
+
+    // Twitter Card tags
+    this.setMeta('twitter:title', seo?.metaTitle || store.name);
+    this.setMeta('twitter:description', seo?.metaDescription);
+    this.setMeta('twitter:image', seo?.ogImageUrl);
+  }
+
+  /** Sets or updates a `<meta>` tag; removes it when `content` is empty. */
+  private setMeta(name: string, content: string | undefined, isProperty = false): void {
+    if (!content) return;
+    const attr = isProperty ? 'property' : 'name';
+    let tag = document.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
+    if (!tag) {
+      tag = document.createElement('meta');
+      tag.setAttribute(attr, name);
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute('content', content);
   }
 }
