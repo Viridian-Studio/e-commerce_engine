@@ -1,0 +1,107 @@
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:51.722Z - [Client] Starting new daemon server in background
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:51.937Z - [Client] Waiting for server (max: 6000 attempts, 10ms interval)
+DEBUG nx::native::watch::watcher: watching started origin=/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.116Z - [WATCHER]: Subscribed to changes within: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine (native)
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.122Z - New daemon starting from: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/daemon/server/server.js
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.123Z - New daemon __dirname: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/daemon/server
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.124Z - New daemon nxVersion: 23.2.0
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.127Z - New daemon getInstalledNxVersion(): 23.2.0
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.131Z - Time taken for 'workspace context init' 0.47670799999991686ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.143Z - [Server] Starting outdated check interval (20ms)
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.147Z - Started listening on: /tmp/.nx/1001/sockets/06769c47d84db72ed588/d.sock
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.157Z - [Client] Server available
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.159Z - [Client] Daemon server started, pid=34
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.161Z - [Messenger] Setting up socket listeners
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.162Z - [Messenger] listen() complete
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.181Z - [Messenger] Sending message type: REQUEST_PROJECT_GRAPH
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:53.183Z - [Messenger] Message sent
+DEBUG nx::native::watch::watcher: watching started origin=/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.309Z - [LATEST-NX]: Pulling latest Nx...
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.483Z - [AI-AGENTS]: Starting agent configuration status computation
+[isolated-plugin] spawned worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js" (pid: 87, socket: /tmp/.nx/1001/sockets/2c9ce242/p34-0-d0e5c66f.sock)
+[isolated-plugin] spawned worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json" (pid: 88, socket: /tmp/.nx/1001/sockets/2c9ce242/p34-1-0596bd26.sock)
+[isolated-plugin] spawned worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json" (pid: 100, socket: /tmp/.nx/1001/sockets/2c9ce242/p34-2-037bff3d.sock)
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.988Z - Time taken for 'hash changed files from watcher' 0.0414579999999205ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:53.992Z - Time taken for 'loadSpecifiedNxPlugins' 673.1636249999999ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.009Z - Established a connection. Number of open connections: 1
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.010Z - Established a connection. Number of open connections: 2
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.012Z - Closed a connection. Number of open connections: 1
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.028Z - Received raw message of length 4691
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.030Z - Received json message of type REQUEST_PROJECT_GRAPH
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.032Z - [REQUEST]: Client Request for Project Graph Received
+DEBUG nx::native::watch::watcher: force-flush END count=0 replies=1 elapsed=10.12125ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.048Z - Reusing in-memory cached project graph because no files changed.
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.888Z - [NX-CONSOLE]: Failed to use latest Nx for console status. Error: An error occurred while checking the provenance of nx@latest. This could indicate a security risk. Please double check https://www.npmjs.com/package/nx to see if the package is published correctly or file an issue at https://github.com/nrwl/nx/issues. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true. 
+ Error: fetch failed
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.893Z - [AI-AGENTS]: Failed to compute agent configuration status from latest Nx. Error: An error occurred while checking the provenance of nx@latest. This could indicate a security risk. Please double check https://www.npmjs.com/package/nx to see if the package is published correctly or file an issue at https://github.com/nrwl/nx/issues. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true. 
+ Error: fetch failed
+DEBUG nx::native::ide::install: Detected editor: Unknown
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:54.896Z - [AI-AGENTS]: Agent configuration status computation completed: 0 fully configured, 0 outdated, 0 partially configured, 0 non-configured
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json" (pid: 88) listening on /tmp/.nx/1001/sockets/2c9ce242/p34-1-0596bd26.sock
+[isolated-plugin] connected to worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json" (pid: 88)
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:56.870Z - Time taken for 'start-plugin-worker:/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json' 2907.8308350000007ms
+Time taken for 'plugin worker 88 code loading' 2752.60071ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json" (pid: 88) connected
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js" (pid: 87) listening on /tmp/.nx/1001/sockets/2c9ce242/p34-0-d0e5c66f.sock
+Time taken for 'plugin worker 87 code loading' 2791.490335ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js" (pid: 87) connected
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json" (pid: 100) listening on /tmp/.nx/1001/sockets/2c9ce242/p34-2-037bff3d.sock
+Time taken for 'plugin worker 100 code loading' 2778.898293ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json" (pid: 100) connected
+[isolated-plugin] connected to worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json" (pid: 100)
+[isolated-plugin] connected to worker for "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js" (pid: 87)
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:56.889Z - Time taken for 'start-plugin-worker:/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js' 3402.0893770000002ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:56.891Z - Time taken for 'start-plugin-worker:/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json' 2908.3651680000003ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json" (pid: 100) loaded successfully
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:56.949Z - Time taken for 'Load Nx Plugin: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/project-json/build-nodes/project-json' 3640.381835ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json" (pid: 88) loaded successfully
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.082Z - Time taken for 'Load Nx Plugin: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/package-json' 3774.6899599999997ms
+[plugin-worker] "/sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js" (pid: 87) loaded successfully
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.245Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.246Z - [REQUEST]: 
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.246Z - [REQUEST]: 
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.248Z - Streaming message to client: progress update for topic graph-construction
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.250Z - Time taken for 'loadDefaultNxPlugins' 3938.845752ms
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:57.250Z - [Messenger] Received message, length: 47
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.252Z - Time taken for 'Load Nx Plugin: /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/node_modules/nx/dist/src/plugins/js' 3938.383127ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.262Z - Streaming message to client: progress update for topic graph-construction
+Time taken for 'nx/js/dependencies-and-lockfile:createNodes' 0.39712499999996ms
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:57.263Z - [Messenger] Received message, length: 142
+[isolated-plugin] shutting down worker for "nx/core/project-json" after createNodes
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.266Z - Streaming message to client: progress update for topic graph-construction
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:57.267Z - [Messenger] Received message, length: 101
+[isolated-plugin] shutting down worker for "nx/core/package-json" after createNodes
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.274Z - Streaming message to client: progress update for topic graph-construction
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:57.277Z - [Messenger] Received message, length: 47
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.308Z - Streaming message to client: progress update for topic graph-construction
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.309Z - Time taken for 'build-project-configs' 41.68133399999988ms
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:57.308Z - [Messenger] Received message, length: 47
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.309Z - Time taken for 'createNodes:merge' 14.8890420000007ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.311Z - Time taken for 'native-file-deps' 0.0057500000002619345ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.312Z - Time taken for 'get-workspace-files' 0.36420799999996234ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:57.313Z - Time taken for 'read cache' 0.24904199999946286ms
+[isolated-plugin] shutting down worker for "nx/js/dependencies-and-lockfile" after createDependencies
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.919Z - Streaming message to client: progress update for topic graph-construction
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:58.920Z - [Messenger] Received message, length: 47
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.922Z - [SYNC]: collect registered sync generators
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.930Z - Wrote project graph cache to /sessions/rcw-01ggeebz8wwanqwpj6eqtihg/mnt/e-commerce_engine/.nx/workspace-data/project-graph.json
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.931Z - Serializing response for REQUEST_PROJECT_GRAPH message in json mode
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.931Z - Responding to REQUEST_PROJECT_GRAPH message
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.932Z - [REQUEST]: Responding to the client. project-graph
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.932Z - Done responding to the client project-graph
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:42:58.932Z - [Messenger] Received message, length: 13753
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.932Z - Handled json message REQUEST_PROJECT_GRAPH. Handling time: 4899. Response time: 1.
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.933Z - Time taken for 'total for creating and serializing project graph' 4898.55821ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.936Z - Time taken for 'total execution time for createProjectGraph()' 1619.5227509999995ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.936Z - Time taken for 'createDependencies' 1612.658042ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.939Z - Time taken for 'nx/js/dependencies-and-lockfile:createDependencies' 1611.9765430000007ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.940Z - Time taken for 'createMetadata' 0.018541999999797554ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.941Z - Time taken for 'serialize graph' 0.07883299999957671ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.942Z - Time taken for 'write cache' 6.5795420000004015ms
+[NX v23.2.0 Daemon Server] - 2026-09-03T17:42:58.980Z - Closed a connection. Number of open connections: 0
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:46:06.010Z - [Client] Starting new daemon server in background
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:46:06.191Z - [Client] Waiting for server (max: 6000 attempts, 10ms interval)
+
+ NX   Watcher is not a constructor
+
+[NX v23.2.0 Daemon Client] - 2026-09-03T17:47:14.988Z - [Client] Server not available after 6000 attempts

@@ -1,0 +1,249 @@
+{
+  "nodes": {
+    "types": {
+      "name": "types",
+      "type": "lib",
+      "data": {
+        "root": "libs/types",
+        "targets": {
+          "build": {
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "production",
+              "^production"
+            ],
+            "cache": true,
+            "executor": "nx:run-commands",
+            "outputs": [
+              "{projectRoot}/dist"
+            ],
+            "options": {
+              "command": "tsc -p tsconfig.lib.json",
+              "cwd": "libs/types"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "typecheck": {
+            "dependsOn": [
+              "^build"
+            ],
+            "cache": true,
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "tsc -p tsconfig.lib.json --noEmit",
+              "cwd": "libs/types"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "watch": {
+            "executor": "nx:run-script",
+            "metadata": {
+              "scriptContent": "tsc -p tsconfig.lib.json --watch",
+              "runCommand": "npm run watch"
+            },
+            "options": {
+              "script": "watch"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "types",
+        "tags": [
+          "npm:private",
+          "scope:shared",
+          "type:types"
+        ],
+        "metadata": {
+          "targetGroups": {
+            "NPM Scripts": [
+              "watch"
+            ]
+          },
+          "description": "Shared domain contracts for the E-Commerce Engine (API, admin, storefronts).",
+          "js": {
+            "packageName": "@ecom/types",
+            "packageVersion": "0.1.0",
+            "packageExports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+              }
+            },
+            "packageMain": "./dist/index.js",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/types/src",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "api": {
+      "name": "api",
+      "type": "app",
+      "data": {
+        "root": "apps/api",
+        "targets": {
+          "build": {
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "production",
+              "^production"
+            ],
+            "cache": true,
+            "executor": "nx:run-commands",
+            "outputs": [
+              "{projectRoot}/dist"
+            ],
+            "options": {
+              "command": "nest build",
+              "cwd": "apps/api"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "typecheck": {
+            "dependsOn": [
+              "^build"
+            ],
+            "cache": true,
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "tsc -p tsconfig.json --noEmit",
+              "cwd": "apps/api"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "cache": true,
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "jest --passWithNoTests",
+              "cwd": "apps/api"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "start:dev": {
+            "executor": "nx:run-script",
+            "metadata": {
+              "scriptContent": "nest start --watch",
+              "runCommand": "npm run start:dev"
+            },
+            "options": {
+              "script": "start:dev"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "start:debug": {
+            "executor": "nx:run-script",
+            "metadata": {
+              "scriptContent": "nest start --debug --watch",
+              "runCommand": "npm run start:debug"
+            },
+            "options": {
+              "script": "start:debug"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "serve": {
+            "executor": "nx:run-commands",
+            "options": {
+              "cwd": "apps/api",
+              "command": "nest start --watch"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "start": {
+            "executor": "nx:run-commands",
+            "dependsOn": [
+              "build"
+            ],
+            "options": {
+              "cwd": "apps/api",
+              "command": "node dist/main.js"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "seed": {
+            "executor": "nx:run-commands",
+            "dependsOn": [
+              "^build"
+            ],
+            "options": {
+              "cwd": "apps/api",
+              "command": "ts-node -P tsconfig.seed.json src/scripts/seed.ts"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "api",
+        "tags": [
+          "npm:private",
+          "scope:api",
+          "type:app"
+        ],
+        "metadata": {
+          "targetGroups": {
+            "NPM Scripts": [
+              "start:dev",
+              "start:debug"
+            ]
+          },
+          "description": "E-Commerce Engine REST API (NestJS + MongoDB)",
+          "js": {
+            "packageName": "@ecom/api",
+            "packageVersion": "0.1.0",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/api/src",
+        "projectType": "application",
+        "implicitDependencies": [
+          "types"
+        ]
+      }
+    }
+  },
+  "externalNodes": {},
+  "dependencies": {
+    "types": [],
+    "api": [
+      {
+        "source": "api",
+        "target": "types",
+        "type": "implicit"
+      },
+      {
+        "source": "api",
+        "target": "types",
+        "type": "static"
+      }
+    ]
+  },
+  "version": "6.0",
+  "errors": [],
+  "computedAt": 1788457378924
+}
