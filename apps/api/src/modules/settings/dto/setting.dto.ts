@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, IsDefined } from 'class-validator';
 
 export class UpsertSettingDto {
   @ApiProperty()
@@ -7,5 +7,6 @@ export class UpsertSettingDto {
   key: string;
 
   @ApiProperty({ type: Object })
+  @IsDefined()
   value: unknown;
 }

@@ -9,6 +9,7 @@ import { OrdersService } from '../orders/orders.service';
 import { CustomersService } from '../customers/customers.service';
 import { ShippingService } from '../shipping/shipping.service';
 import { DiscountsService } from '../discounts/discounts.service';
+import { SettingsService } from '../settings/settings.service';
 import { ListQueryDto } from '../../common/dto/list-query.dto';
 import { AddCartItemDto, UpdateCartItemDto } from '../carts/dto/cart.dto';
 import { CheckoutDto } from './dto/checkout.dto';
@@ -29,12 +30,17 @@ export class StorefrontService {
     private readonly customers: CustomersService,
     private readonly shipping: ShippingService,
     private readonly discounts: DiscountsService,
+    private readonly settings: SettingsService,
   ) {}
 
   async resolveStore(slug?: string): Promise<Store> {
     if (!slug) throw new BadRequestException('Provide a store slug');
     const store = await this.stores.findBySlug(slug);
     if (!store) throw new NotFoundException('Store not found');
+    // Merge storefront-relevant settings (maintenance mode, etc.) into the
+    // store's `settings` field so the storefront can read them in one call.
+    const allSettings = await this.settings.findAll(store._id);
+    store.settings = { ...store.settings, ...allSettings };
     return store;
   }
 

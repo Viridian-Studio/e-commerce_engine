@@ -60,6 +60,73 @@
     </div>
   </section>
 
+  <!-- ─── Storefront status ─── -->
+  <section>
+    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--color-text-faint)">Storefront status</h2>
+
+    <div class="card overflow-hidden">
+      <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-start gap-4">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors"
+            [class.bg-(--color-warning-soft)]="!maintenanceEnabled()"
+            [class.text-(--color-warning)]="!maintenanceEnabled()"
+            [class.bg-(--color-danger-soft)]="maintenanceEnabled()"
+            [class.text-(--color-danger)]="maintenanceEnabled()"
+          >
+            @if (maintenanceEnabled()) {
+              <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6"><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1" /></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6"><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 5v5l3 3" /></svg>
+            }
+          </div>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-sm font-semibold text-(--color-text)">Maintenance mode</h3>
+              @if (maintenanceEnabled()) {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-(--color-danger-soft) px-2.5 py-1 text-[11px] font-medium text-(--color-danger)">
+                  <span class="h-2 w-2 animate-pulse rounded-full bg-(--color-danger)"></span>
+                  Active
+                </span>
+              } @else {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-(--color-success-soft) px-2.5 py-1 text-[11px] font-medium text-(--color-success)">
+                  <span class="h-2 w-2 rounded-full bg-(--color-success)"></span>
+                  Online
+                </span>
+              }
+            </div>
+            <p class="mt-1 text-xs leading-relaxed text-(--color-text-muted)">When enabled, the storefront shows a maintenance page to all visitors.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="shrink-0"
+          [class]="maintenanceEnabled() ? 'btn-danger' : 'btn-secondary'"
+          [disabled]="maintenanceSaving()"
+          (click)="toggleMaintenance()"
+        >
+          @if (maintenanceSaving()) {
+            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 animate-spin"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9" /></svg>
+            {{ maintenanceEnabled() ? 'Disabling…' : 'Enabling…' }}
+          } @else {
+            {{ maintenanceEnabled() ? 'Disable maintenance' : 'Enable maintenance' }}
+          }
+        </button>
+      </div>
+
+      @if (maintenanceEnabled()) {
+        <div class="border-t border-(--color-border) bg-(--color-surface-2)/50 p-4">
+          <label class="label">Maintenance message <span class="text-(--color-text-faint)">(shown to visitors)</span></label>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <input type="text" class="input flex-1" placeholder="We'll be back shortly — performing scheduled maintenance." [(ngModel)]="maintenanceMessage" (blur)="saveMaintenanceMessage()" />
+            <button type="button" class="btn-primary shrink-0" (click)="saveMaintenanceMessage()">Save message</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- ─── Custom settings ─── -->
   <section>
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--color-text-faint)">Custom settings</h2>

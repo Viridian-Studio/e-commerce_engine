@@ -12,6 +12,7 @@ import { BrandsModule } from '../brands/brands.module';
 import { ShippingModule } from '../shipping/shipping.module';
 import { DiscountsModule } from '../discounts/discounts.module';
 import { PaymentsModule } from '../payments/payments.module';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PaymentsModule } from '../payments/payments.module';
     ShippingModule,
     DiscountsModule,
     PaymentsModule,
+    SettingsModule,
   ],
   controllers: [StorefrontController],
   providers: [StorefrontService],

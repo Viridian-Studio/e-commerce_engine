@@ -14,6 +14,8 @@ interface SettingRow {
 }
 
 const VIRIDIAN_KEY = 'viridian_warehouse_api_key';
+const MAINTENANCE_KEY = 'maintenance_enabled';
+const MAINTENANCE_MSG_KEY = 'maintenance_message';
 
 @Component({
   selector: 'app-settings-page',
@@ -41,6 +43,11 @@ export class SettingsPage {
   protected readonly viridianTestResult = signal<ViridianTestResult | null>(null);
   protected viridianApiKey = '';
 
+  // Maintenance mode
+  protected readonly maintenanceEnabled = signal(false);
+  protected readonly maintenanceSaving = signal(false);
+  protected maintenanceMessage = '';
+
   constructor() {
     effect(() => {
       if (this.storeContext.currentStoreId()) void this.load();
@@ -61,6 +68,9 @@ export class SettingsPage {
       // Sync Viridian connection status from stored settings
       this.viridianConnected.set(Boolean(all[VIRIDIAN_KEY]));
       this.viridianApiKey = (all[VIRIDIAN_KEY] as string) ?? '';
+      // Sync maintenance mode
+      this.maintenanceEnabled.set(all[MAINTENANCE_KEY] === true);
+      this.maintenanceMessage = (all[MAINTENANCE_MSG_KEY] as string) ?? '';
     } catch (err) {
       this.notifications.error(extractErrorMessage(err));
     } finally {
@@ -118,6 +128,42 @@ export class SettingsPage {
       this.viridianApiKey = '';
       this.notifications.success('Viridian Warehouse disconnected');
       await this.load();
+    } catch (err) {
+      this.notifications.error(extractErrorMessage(err));
+    }
+  }
+
+  protected async toggleMaintenance(): Promise<void> {
+    const next = !this.maintenanceEnabled();
+    if (next) {
+      const ok = await this.confirm.confirm({
+        title: 'Enable maintenance mode?',
+        message: 'The storefront will show a maintenance page to all visitors.',
+        confirmLabel: 'Enable',
+        danger: true,
+      });
+      if (!ok) return;
+    }
+    this.maintenanceSaving.set(true);
+    try {
+      await this.settingsService.upsert(MAINTENANCE_KEY, next);
+      if (this.maintenanceMessage.trim()) {
+        await this.settingsService.upsert(MAINTENANCE_MSG_KEY, this.maintenanceMessage.trim());
+      }
+      this.maintenanceEnabled.set(next);
+      this.notifications.success(next ? 'Maintenance mode enabled' : 'Storefront is back online');
+      await this.load();
+    } catch (err) {
+      this.notifications.error(extractErrorMessage(err));
+    } finally {
+      this.maintenanceSaving.set(false);
+    }
+  }
+
+  protected async saveMaintenanceMessage(): Promise<void> {
+    try {
+      await this.settingsService.upsert(MAINTENANCE_MSG_KEY, this.maintenanceMessage.trim());
+      this.notifications.success('Maintenance message saved');
     } catch (err) {
       this.notifications.error(extractErrorMessage(err));
     }
