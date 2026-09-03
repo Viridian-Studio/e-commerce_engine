@@ -1,0 +1,216 @@
+<section class="section-dark py-10">
+  <div class="container-store animate-fade-up">
+    <h1 class="heading-lg mb-6">Pénztár</h1>
+
+    <nav class="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold tracking-wide uppercase" aria-label="Fizetési lépések">
+      @for (s of steps; track s.key; let i = $index) {
+        <button
+          type="button"
+          class="transition-colors"
+          [class]="s.key === step() ? 'text-(--color-store-primary)' : 'text-(--color-store-text-muted) hover:text-(--color-store-text)'"
+          (click)="goTo(s.key)"
+        >
+          {{ i + 1 }}. {{ s.label }}
+        </button>
+        @if (i < steps.length - 1) {
+          <span class="text-(--color-store-text-faint)" aria-hidden="true">&rarr;</span>
+        }
+      }
+    </nav>
+
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_340px]">
+      <div>
+        @switch (step()) {
+          @case ('cart') {
+            @if (cart.cart() && cart.cart()!.items.length > 0) {
+              <div class="divide-y divide-(--color-store-border) border-t border-b border-(--color-store-border)">
+                @for (item of cart.cart()!.items; track item.productId) {
+                  <div class="flex items-center justify-between gap-4 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="h-16 w-13 shrink-0 overflow-hidden bg-(--color-store-light)">
+                        @if (item.image) {
+                          <img [src]="item.image" [alt]="item.name" class="h-full w-full object-cover" />
+                        }
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium">{{ item.name }}</p>
+                        <p class="text-xs text-(--color-store-text-faint)">Mennyiség: {{ item.quantity }}</p>
+                      </div>
+                    </div>
+                    <app-product-price [price]="item.price * item.quantity" [currency]="cart.currency()" />
+                  </div>
+                }
+              </div>
+              <button type="button" class="btn-primary mt-6" (click)="continueFromCart()">Tovább az adatokhoz</button>
+            } @else {
+              <p class="text-sm text-(--color-store-text-muted)">A kosarad üres.</p>
+              <a routerLink="/" class="btn-outline mt-4 inline-flex">Vásárlás folytatása</a>
+            }
+          }
+
+          @case ('information') {
+            <form [formGroup]="form" (ngSubmit)="continueFromInformation()" class="flex flex-col gap-5" novalidate>
+              <div>
+                <label class="field-label" for="email">Email cím</label>
+                <input id="email" type="email" formControlName="email" class="field-input" autocomplete="email" />
+                @if (form.controls.email.invalid && form.controls.email.touched) {
+                  <p class="mt-1 text-xs text-(--color-store-primary)">Adj meg egy érvényes email címet.</p>
+                }
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="field-label" for="firstName">Keresztnév</label>
+                  <input id="firstName" type="text" formControlName="firstName" class="field-input" autocomplete="given-name" />
+                </div>
+                <div>
+                  <label class="field-label" for="lastName">Vezetéknév</label>
+                  <input id="lastName" type="text" formControlName="lastName" class="field-input" autocomplete="family-name" />
+                </div>
+              </div>
+
+              <div>
+                <label class="field-label" for="phone">Telefonszám (opcionális)</label>
+                <input id="phone" type="tel" formControlName="phone" class="field-input" autocomplete="tel" />
+              </div>
+
+              <div formGroupName="address" class="flex flex-col gap-4 border-t border-(--color-store-border) pt-5">
+                <p class="field-label mb-0">Szállítási cím</p>
+                <div>
+                  <label class="field-label" for="line1">Cím</label>
+                  <input id="line1" type="text" formControlName="line1" class="field-input" autocomplete="address-line1" />
+                </div>
+                <div>
+                  <label class="field-label" for="line2">Emelet, ajtó, stb. (opcionális)</label>
+                  <input id="line2" type="text" formControlName="line2" class="field-input" autocomplete="address-line2" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="field-label" for="city">Város</label>
+                    <input id="city" type="text" formControlName="city" class="field-input" autocomplete="address-level2" />
+                  </div>
+                  <div>
+                    <label class="field-label" for="state">Megye / régió</label>
+                    <input id="state" type="text" formControlName="state" class="field-input" autocomplete="address-level1" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="field-label" for="postalCode">Irányítószám</label>
+                    <input id="postalCode" type="text" formControlName="postalCode" class="field-input" autocomplete="postal-code" />
+                  </div>
+                  <div>
+                    <label class="field-label" for="country">Ország</label>
+                    <select id="country" formControlName="country" class="field-input" autocomplete="country">
+                      @for (c of countries; track c.code) {
+                        <option [value]="c.code">{{ c.name }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary mt-2">Tovább a szállításhoz</button>
+            </form>
+          }
+
+          @case ('shipping') {
+            <div class="flex flex-col gap-4">
+              @if (shippingLoading()) {
+                <p class="text-sm text-(--color-store-text-muted)">Szállítási díj kiszámítása…</p>
+              } @else if (shippingRate()) {
+                <label class="flex cursor-pointer items-center justify-between border border-(--color-store-primary) bg-(--color-store-primary)/10 p-4">
+                  <span class="flex items-center gap-3 text-sm">
+                    <input type="radio" checked disabled class="accent-(--color-store-primary)" />
+                    {{ shippingRate()!.name }}
+                  </span>
+                  <app-product-price [price]="shippingRate()!.price" [currency]="cart.currency()" />
+                </label>
+                <p class="text-xs text-(--color-store-text-muted)">A díjat az áruház számítja ki a megadott cím alapján.</p>
+              }
+              <button type="button" class="btn-primary mt-2" [disabled]="shippingLoading()" (click)="continueFromShipping()">
+                Tovább a fizetéshez
+              </button>
+            </div>
+          }
+
+          @case ('payment') {
+            <div class="flex flex-col gap-5">
+              <div>
+                <p class="field-label">Fizetési mód</p>
+                <div class="flex flex-col gap-2">
+                  <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
+                    <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'card'" (change)="paymentMethod.set('card')" class="accent-(--color-store-primary)" />
+                    Bankkártya
+                  </label>
+                  <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
+                    <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cod'" (change)="paymentMethod.set('cod')" class="accent-(--color-store-primary)" />
+                    Utánvét
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="field-label" for="discount">Kedvezménykód (opcionális)</label>
+                <div class="relative">
+                  <input
+                    id="discount"
+                    type="text"
+                    class="field-input pr-9"
+                    placeholder="Írd be a kuponkódot, ha van"
+                    [value]="discountCode()"
+                    (input)="onDiscountCodeInput($any($event.target).value)"
+                  />
+                  @if (discountChecking()) {
+                    <span class="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-(--color-store-text-faint)">…</span>
+                  } @else if (discountPreview()) {
+                    <span class="absolute top-1/2 right-3 -translate-y-1/2 text-(--color-store-primary)">&#10003;</span>
+                  }
+                </div>
+                @if (discountPreview(); as d) {
+                  <p class="animate-fade-up mt-1.5 text-xs text-(--color-store-primary)">
+                    „{{ d.code }}” alkalmazva — <app-product-price [price]="d.amount" [currency]="cart.currency()" /> kedvezmény
+                  </p>
+                } @else if (discountError()) {
+                  <p class="mt-1.5 text-xs text-(--color-store-text-muted)">{{ discountError() }}</p>
+                }
+              </div>
+
+              <button type="button" class="btn-primary mt-2 transition-transform active:scale-95" [disabled]="placing()" (click)="placeOrder()">
+                {{ placing() ? 'Feldolgozás…' : 'Rendelés leadása' }}
+              </button>
+            </div>
+          }
+        }
+      </div>
+
+      <aside class="h-fit border border-(--color-store-border) p-5">
+        <h2 class="heading-md mb-4 text-sm">Rendelés összesítő</h2>
+        <div class="flex flex-col gap-2 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-(--color-store-text-muted)">Részösszeg</span>
+            <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-(--color-store-text-muted)">Szállítás</span>
+            @if (shippingRate()) {
+              <app-product-price [price]="shippingRate()!.price" [currency]="cart.currency()" />
+            } @else {
+              <span class="text-xs text-(--color-store-text-faint)">Később</span>
+            }
+          </div>
+          @if (discountPreview(); as d) {
+            <div class="animate-fade-up flex items-center justify-between text-(--color-store-primary)">
+              <span>Kedvezmény ({{ d.code }})</span>
+              <span>&minus;<app-product-price [price]="d.amount" [currency]="cart.currency()" /></span>
+            </div>
+          }
+          <div class="mt-2 flex items-center justify-between border-t border-(--color-store-border) pt-3 text-base font-bold">
+            <span>Összesen</span>
+            <app-product-price [price]="total()" [currency]="cart.currency()" size="lg" />
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+<div
+  class="fixed inset-0 z-[60] transition-opacity duration-300"
+  [class]="cart.drawerOpen() ? 'opacity-100' : 'pointer-events-none opacity-0'"
+  [attr.aria-hidden]="!cart.drawerOpen()"
+>
+  <div class="absolute inset-0 bg-black/60" (click)="cart.closeDrawer()"></div>
+  <aside
+    class="section-dark absolute inset-y-0 right-0 flex w-[90vw] max-w-md flex-col border-l border-(--color-store-border) transition-transform duration-300 ease-out"
+    [class]="cart.drawerOpen() ? 'translate-x-0' : 'translate-x-full'"
+  >
+    <div class="flex items-center justify-between border-b border-(--color-store-border) px-5 py-4">
+      <h2 class="heading-md">Kosarad ({{ cart.itemCount() }})</h2>
+      <button type="button" class="icon-btn" (click)="cart.closeDrawer()" aria-label="Kosár bezárása">&times;</button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-5">
+      @if (!cart.cart() || cart.cart()!.items.length === 0) {
+        <app-empty-state title="A kosarad üres" message="Adj hozzá valamit, ami tetszik — itt fog megjelenni.">
+          <button type="button" class="btn-primary mt-2" (click)="cart.closeDrawer()">Vásárlás folytatása</button>
+        </app-empty-state>
+      } @else {
+        <div class="divide-y divide-(--color-store-border)">
+          @for (item of cart.cart()!.items; track $any(item)._id ?? item.productId) {
+            <app-cart-item-row
+              [item]="item"
+              [currency]="cart.currency()"
+              [busy]="cart.loading()"
+              (quantityChanged)="updateQuantity($any(item)._id, $event)"
+              (remove)="removeItem($any(item)._id)"
+            />
+          }
+        </div>
+      }
+    </div>
+
+    @if (cart.cart() && cart.cart()!.items.length > 0) {
+      <div class="border-t border-(--color-store-border) px-5 py-5">
+        <p class="mb-4 text-xs text-(--color-store-text-muted)">Szállítási díj a pénztárnál kerül kiszámításra.</p>
+        <div class="mb-4 flex items-center justify-between text-sm font-semibold">
+          <span>Részösszeg</span>
+          <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" size="lg" />
+        </div>
+        <button type="button" class="btn-primary w-full" (click)="goToCheckout()">Tovább a fizetéshez</button>
+      </div>
+    }
+  </aside>
+</div>

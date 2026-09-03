@@ -110,7 +110,7 @@ async function main() {
     slug: storeSlug,
     domain: undefined,
     currency: 'EUR',
-    locale: 'en-US',
+    locale: 'hu-HU',
     timezone: 'Europe/Belgrade',
     status: StoreStatus.ACTIVE,
     contactEmail: 'hello@ultras.shop',

@@ -1,0 +1,65 @@
+<footer class="section-dark border-t border-(--color-store-border)">
+  <div class="container-store grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <h3 class="heading-md mb-3 text-sm">Csatlakozz hozzánk</h3>
+      <p class="mb-4 text-sm text-(--color-store-text-muted)">Exkluzív hozzáférés az új dobásokhoz és akciókhoz.</p>
+      <form #newsletterForm class="flex" (submit)="$event.preventDefault(); subscribe(newsletterForm)">
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Email címed"
+          class="field-input flex-1 border-r-0"
+          aria-label="Email cím"
+        />
+        <button type="submit" class="btn-primary shrink-0 px-4">Feliratkozás</button>
+      </form>
+    </div>
+
+    <div>
+      <h3 class="heading-md mb-3 text-sm">Vásárlás</h3>
+      <ul class="flex flex-col gap-2 text-sm text-(--color-store-text-muted)">
+        @for (top of shopLinks(); track top._id) {
+          <li><a [routerLink]="['/category', top.slug]" class="hover:text-(--color-store-text)">{{ top.name }}</a></li>
+        }
+        <li><a [routerLink]="['/collection', 'sale']" class="hover:text-(--color-store-text)">Akció</a></li>
+        <li><a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-text)">Újdonságok</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="heading-md mb-3 text-sm">Vásárlói tájékoztató</h3>
+      <ul class="flex flex-col gap-2 text-sm text-(--color-store-text-muted)">
+        @for (item of customerCare; track item) {
+          <li><span class="cursor-default">{{ item }}</span></li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="heading-md mb-3 text-sm">Rólunk</h3>
+      <ul class="flex flex-col gap-2 text-sm text-(--color-store-text-muted)">
+        @for (item of about; track item) {
+          <li><span class="cursor-default">{{ item }}</span></li>
+        }
+      </ul>
+      <h3 class="heading-md mt-6 mb-3 text-sm">Kövess minket</h3>
+      <div class="flex items-center gap-3 text-(--color-store-text-muted)">
+        @for (icon of ['IG', 'FB', 'X', 'YT']; track icon) {
+          <span class="flex h-8 w-8 items-center justify-center border border-(--color-store-border) text-[10px] font-bold">{{ icon }}</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-(--color-store-border)">
+    <div class="container-store flex flex-col items-center justify-between gap-4 py-6 text-xs text-(--color-store-text-faint) sm:flex-row">
+      <p>&copy; {{ year }} {{ storeService.store()?.name ?? 'Store' }}. Minden jog fenntartva.</p>
+      <div class="flex items-center gap-2">
+        @for (icon of paymentIcons; track icon) {
+          <span class="border border-(--color-store-border) px-2 py-1 text-[10px] font-semibold tracking-wide">{{ icon }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</footer>

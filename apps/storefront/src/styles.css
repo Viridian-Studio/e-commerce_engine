@@ -1,0 +1,184 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------
+ * Theme tokens. This block is the entire "Ultras" theme — a different
+ * store theme overrides only these variables, never the components.
+ * ------------------------------------------------------------------- */
+@theme {
+  --font-sans:
+    Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --color-store-bg: #0a0a0a;
+  --color-store-surface: #131316;
+  --color-store-surface-2: #1c1c20;
+  --color-store-border: #27272c;
+
+  --color-store-light: #f4f3f0;
+  --color-store-light-2: #e9e7e2;
+  --color-store-ink: #111111;
+  --color-store-ink-muted: #57565c;
+
+  --color-store-text: #f5f5f5;
+  --color-store-text-muted: #9a9a9f;
+  --color-store-text-faint: #6c6c72;
+
+  --color-store-primary: #e2141f;
+  --color-store-primary-hover: #ff2530;
+  --color-store-primary-soft: #e2141f1a;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.45s ease-out both;
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-bump {
+  animation: bump 0.35s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-toast-in {
+  animation: toast-in 0.25s ease-out both;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-store-bg);
+  color: var(--color-store-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-store-border);
+  border-radius: 999px;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+@layer components {
+  /* Section-level dark/light rhythm */
+  .section-dark {
+    @apply bg-(--color-store-bg) text-(--color-store-text);
+  }
+  .section-light {
+    @apply bg-(--color-store-light) text-(--color-store-ink);
+  }
+
+  .container-store {
+    @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.18em] uppercase text-(--color-store-primary);
+  }
+
+  .heading-xl {
+    @apply text-4xl leading-[1.05] font-extrabold tracking-tight uppercase sm:text-5xl lg:text-6xl;
+  }
+  .heading-lg {
+    @apply text-2xl leading-tight font-extrabold tracking-tight uppercase sm:text-3xl;
+  }
+  .heading-md {
+    @apply text-lg font-bold tracking-tight uppercase;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      bg-(--color-store-primary) text-white hover:bg-(--color-store-primary-hover);
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      border border-white/70 text-(--color-store-text) hover:border-white hover:bg-white/10;
+  }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      border border-(--color-store-border) bg-black text-white hover:bg-(--color-store-surface-2);
+  }
+  .btn-outline-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      border border-(--color-store-ink)/30 text-(--color-store-ink) hover:bg-black/5;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-9 w-9 items-center justify-center text-(--color-store-text) transition-colors hover:text-(--color-store-primary);
+  }
+
+  .badge-new {
+    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold tracking-wide uppercase text-white bg-(--color-store-primary);
+  }
+  .badge-sale {
+    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold tracking-wide uppercase text-white bg-black;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold tracking-wide uppercase text-(--color-store-text-muted);
+  }
+  .field-input {
+    @apply w-full border border-(--color-store-border) bg-(--color-store-surface-2) px-3 py-2.5 text-sm text-(--color-store-text)
+      outline-none transition-colors placeholder:text-(--color-store-text-faint)
+      focus:border-(--color-store-primary);
+  }
+  .field-input-light {
+    @apply w-full border border-black/15 bg-white px-3 py-2.5 text-sm text-(--color-store-ink)
+      outline-none transition-colors placeholder:text-black/40 focus:border-(--color-store-ink);
+  }
+}

@@ -57,6 +57,28 @@ export class StorefrontController {
     return this.service.listBrands(storeId);
   }
 
+  @Get('shipping/rate')
+  @ApiOperation({ summary: 'Preview the shipping cost for a country + subtotal' })
+  getShippingRate(
+    @CurrentStore() storeId: string,
+    @Query('country') country: string,
+    @Query('subtotal') subtotal: string,
+  ): Promise<{ price: number; name: string }> {
+    this.requireStore(storeId);
+    return this.service.getShippingRate(storeId, country, Number(subtotal) || 0);
+  }
+
+  @Get('discount/preview')
+  @ApiOperation({ summary: 'Preview a discount code against a subtotal, without recording a usage' })
+  previewDiscount(
+    @CurrentStore() storeId: string,
+    @Query('code') code: string,
+    @Query('subtotal') subtotal: string,
+  ): Promise<{ amount: number; code: string }> {
+    this.requireStore(storeId);
+    return this.service.previewDiscount(storeId, code, Number(subtotal) || 0);
+  }
+
   @Post('cart')
   @ApiOperation({ summary: 'Create or resume a cart — pass back the returned token on later requests' })
   createCart(@CurrentStore() storeId: string, @Body('token') token?: string): Promise<Cart> {

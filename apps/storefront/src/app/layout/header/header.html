@@ -1,0 +1,88 @@
+<div class="section-dark hidden border-b border-(--color-store-border) sm:block">
+  <div class="container-store flex items-center justify-between py-2 text-[11px] text-(--color-store-text-muted)">
+    <span>Ingyenes nemzetközi szállítás &middot; 14 napos visszaküldés</span>
+    <span>{{ storeService.store()?.currency ?? 'EUR' }}</span>
+  </div>
+</div>
+
+<header class="section-dark sticky top-0 z-40 border-b border-(--color-store-border)">
+  <div class="container-store flex items-center justify-between py-4">
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        class="icon-btn lg:hidden"
+        (click)="mobileMenuOpen.set(true)"
+        aria-label="Open menu"
+      >
+        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
+          <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+
+      <a routerLink="/" class="flex items-baseline gap-1.5 text-lg font-extrabold tracking-tight">
+        <span>{{ logoWords().main | uppercase }}</span>
+        @if (logoWords().accent) {
+          <span class="bg-(--color-store-primary) px-1.5 py-0.5 text-sm text-white">{{ logoWords().accent | uppercase }}</span>
+        }
+      </a>
+    </div>
+
+    <nav class="hidden items-center gap-7 text-xs font-semibold tracking-wide uppercase lg:flex">
+      <a routerLink="/" routerLinkActive="text-(--color-store-primary)" [routerLinkActiveOptions]="{ exact: true }" class="hover:text-(--color-store-primary)">Kezdőlap</a>
+      @for (top of categoryTree(); track top._id) {
+        @if (top.children.length > 0) {
+          <div class="group relative py-2">
+            <button type="button" class="flex items-center gap-1 hover:text-(--color-store-primary)">
+              {{ top.name }}
+              <svg viewBox="0 0 24 24" fill="none" class="h-3 w-3"><path stroke="currentColor" stroke-width="2" d="m6 9 6 6 6-6" /></svg>
+            </button>
+            <div class="section-dark invisible absolute top-full left-0 flex min-w-44 flex-col gap-1 border border-(--color-store-border) p-3 opacity-0 shadow-xl transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              @for (child of top.children; track child._id) {
+                <a [routerLink]="['/category', child.slug]" class="px-2 py-1.5 text-[11px] normal-case tracking-normal text-(--color-store-text-muted) hover:text-(--color-store-text)">
+                  {{ child.name }}
+                </a>
+              }
+            </div>
+          </div>
+        } @else {
+          <a [routerLink]="['/category', top.slug]" class="hover:text-(--color-store-primary)">{{ top.name }}</a>
+        }
+      }
+      <a routerLink="/brands" class="hover:text-(--color-store-primary)">Márkák</a>
+      <a [routerLink]="['/collection', 'sale']" class="text-(--color-store-primary)">Akció</a>
+      <a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-primary)">Újdonságok</a>
+    </nav>
+
+    <div class="flex items-center gap-1">
+      <a routerLink="/search" class="icon-btn" aria-label="Keresés">
+        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
+          <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+        </svg>
+      </a>
+      <a routerLink="/login" class="icon-btn" aria-label="Fiók">
+        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
+          <path stroke="currentColor" stroke-width="1.8" d="M20 21a8 8 0 1 0-16 0" />
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" />
+        </svg>
+      </a>
+      <button type="button" class="icon-btn relative transition-transform active:scale-90" (click)="cart.openDrawer()" aria-label="Kosár">
+        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
+          <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M6 6h15l-1.5 9h-12z" />
+          <path stroke="currentColor" stroke-width="1.8" d="M6 6 5 3H2" />
+          <circle cx="9" cy="20" r="1.3" fill="currentColor" />
+          <circle cx="18" cy="20" r="1.3" fill="currentColor" />
+        </svg>
+        @if (cart.itemCount() > 0) {
+          <span
+            class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-(--color-store-primary) text-[10px] font-bold text-white"
+            [class.animate-bump]="cartBump()"
+          >
+            {{ cart.itemCount() }}
+          </span>
+        }
+      </button>
+    </div>
+  </div>
+</header>
+
+<app-mobile-menu [categoryTree]="categoryTree()" [open]="mobileMenuOpen()" (closed)="mobileMenuOpen.set(false)" />

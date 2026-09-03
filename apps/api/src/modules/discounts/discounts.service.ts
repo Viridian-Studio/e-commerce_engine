@@ -52,10 +52,11 @@ export class DiscountsService {
   }
 
   /**
-   * Apply a discount code to a subtotal. Returns the discount amount (>=0).
-   * Validates status, date window, usage limits and minimum subtotal.
+   * Validates a code against a subtotal and computes the discount amount,
+   * without recording a usage. Shared by the live preview and the final
+   * apply so both enforce identical rules.
    */
-  async applyCode(storeId: string, code: string, subtotal: number): Promise<{ amount: number; discount: Discount }> {
+  private async validateAndCompute(storeId: string, code: string, subtotal: number): Promise<{ amount: number; discount: Discount }> {
     const discount = await this.findByCode(storeId, code);
     if (!discount) throw new NotFoundException('Discount code not found');
     if (discount.status !== 'active') throw new BadRequestException('Discount is not active');
@@ -76,7 +77,26 @@ export class DiscountsService {
     }
     amount = roundMoney(amount);
 
-    await this.model.updateOne({ _id: discount._id }, { $inc: { usageCount: 1 } }).exec();
     return { amount, discount };
+  }
+
+  /**
+   * Read-only preview for the storefront cart/checkout UI — same validation
+   * as applyCode, but never records a usage (usage is only ever recorded once
+   * an order is actually placed).
+   */
+  previewCode(storeId: string, code: string, subtotal: number): Promise<{ amount: number; discount: Discount }> {
+    return this.validateAndCompute(storeId, code, subtotal);
+  }
+
+  /**
+   * Apply a discount code to a subtotal. Returns the discount amount (>=0).
+   * Validates status, date window, usage limits and minimum subtotal, and
+   * records a usage — call this only when an order is actually being placed.
+   */
+  async applyCode(storeId: string, code: string, subtotal: number): Promise<{ amount: number; discount: Discount }> {
+    const result = await this.validateAndCompute(storeId, code, subtotal);
+    await this.model.updateOne({ _id: result.discount._id }, { $inc: { usageCount: 1 } }).exec();
+    return result;
   }
 }

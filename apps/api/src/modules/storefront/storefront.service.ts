@@ -60,6 +60,15 @@ export class StorefrontService {
     return this.brands.findAllList(storeId);
   }
 
+  getShippingRate(storeId: string, country: string, subtotal: number): Promise<{ price: number; name: string }> {
+    return this.shipping.computeRate(storeId, country, subtotal);
+  }
+
+  async previewDiscount(storeId: string, code: string, subtotal: number): Promise<{ amount: number; code: string }> {
+    const { amount, discount } = await this.discounts.previewCode(storeId, code, subtotal);
+    return { amount, code: discount.code };
+  }
+
   getOrCreateCart(storeId: string, token?: string): Promise<Cart> {
     return this.carts.getOrCreate(storeId, token);
   }

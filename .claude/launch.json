@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "storefront",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:storefront"],
+      "port": 4300
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:admin"],
+      "port": 4200
+    }
+  ]
+}

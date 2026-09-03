@@ -1,0 +1,36 @@
+<section class="section-dark py-10">
+  <div class="container-store animate-fade-up">
+    <h1 class="heading-lg mb-8">Kosarad @if (cart.itemCount() > 0) {({{ cart.itemCount() }})}</h1>
+
+    @if (!cart.cart() || cart.cart()!.items.length === 0) {
+      <app-empty-state title="A kosarad üres" message="Úgy tűnik, még nem adtál hozzá semmit.">
+        <a routerLink="/" class="btn-primary mt-2">Vásárlás folytatása</a>
+      </app-empty-state>
+    } @else {
+      <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
+        <div class="divide-y divide-(--color-store-border) border-t border-b border-(--color-store-border)">
+          @for (item of cart.cart()!.items; track $any(item)._id ?? item.productId) {
+            <app-cart-item-row
+              [item]="item"
+              [currency]="cart.currency()"
+              [busy]="cart.loading()"
+              (quantityChanged)="updateQuantity($any(item)._id, $event)"
+              (remove)="removeItem($any(item)._id)"
+            />
+          }
+        </div>
+
+        <aside class="h-fit border border-(--color-store-border) p-5">
+          <h2 class="heading-md mb-4 text-sm">Rendelés összesítő</h2>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-(--color-store-text-muted)">Részösszeg</span>
+            <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" />
+          </div>
+          <p class="mt-3 text-xs text-(--color-store-text-muted)">A szállítási díj a pénztárnál kerül kiszámításra.</p>
+          <button type="button" class="btn-primary mt-5 w-full" (click)="checkout()">Tovább a fizetéshez</button>
+          <a routerLink="/" class="btn-outline mt-2 flex w-full">Vásárlás folytatása</a>
+        </aside>
+      </div>
+    }
+  </div>
+</section>
