@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StorefrontLayout } from './layout/storefront-layout/storefront-layout';
+import { customerGuard } from './core/guards/customer.guard';
 
 export const routes: Routes = [
   {
@@ -47,13 +48,20 @@ export const routes: Routes = [
       },
       {
         path: 'login',
-        loadComponent: () => import('./shared/components/coming-soon/coming-soon').then((m) => m.ComingSoon),
-        data: { title: 'Fiók', message: 'A vásárlói fiókok a következő frissítésben érkeznek.' },
+        loadComponent: () => import('./features/auth/login').then((m) => m.Login),
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/register').then((m) => m.Register),
+      },
+      {
+        path: 'account',
+        canActivate: [customerGuard],
+        loadComponent: () => import('./features/account/account').then((m) => m.Account),
       },
       {
         path: 'wishlist',
-        loadComponent: () => import('./shared/components/coming-soon/coming-soon').then((m) => m.ComingSoon),
-        data: { title: 'Kedvencek', message: 'A teljes kedvenclista a következő frissítésben érkezik.' },
+        loadComponent: () => import('./features/wishlist/wishlist').then((m) => m.WishlistPage),
       },
     ],
   },

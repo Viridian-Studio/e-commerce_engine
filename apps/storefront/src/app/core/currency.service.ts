@@ -57,4 +57,20 @@ export class CurrencyService {
     const converted = this.convert(amount, storeCurrency);
     return new Intl.NumberFormat('hu-HU', { style: 'currency', currency: this.selected() }).format(converted);
   }
+
+  /**
+   * Rounds an amount (already in `currency`) the same way `Intl.NumberFormat`
+   * would when formatting it — HUF has no minor unit (0 decimals), EUR/USD use
+   * 2. Used to round each cart line to the display currency *before* summing,
+   * so the displayed subtotal always equals the sum of the displayed lines.
+   */
+  roundForDisplay(amount: number, currency: DisplayCurrency): number {
+    const minorFactor = currency === 'HUF' ? 1 : 100;
+    return Math.round((amount + Number.EPSILON) * minorFactor) / minorFactor;
+  }
+
+  /** Formats an amount already denominated in the selected display currency (no conversion). */
+  formatSelected(amount: number): string {
+    return new Intl.NumberFormat('hu-HU', { style: 'currency', currency: this.selected() }).format(amount);
+  }
 }

@@ -173,6 +173,7 @@ export class ProductPage {
         sku: variant?.sku,
         quantity: this.quantity(),
         price: this.price(),
+        currency: product.currency,
         image: this.images()[0]?.url,
       });
 

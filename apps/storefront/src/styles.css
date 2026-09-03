@@ -129,33 +129,40 @@ button {
 
   .heading-xl {
     @apply text-4xl leading-[1.05] font-extrabold tracking-tight uppercase sm:text-5xl lg:text-6xl;
+    font-family: var(--font-heading);
   }
   .heading-lg {
     @apply text-2xl leading-tight font-extrabold tracking-tight uppercase sm:text-3xl;
+    font-family: var(--font-heading);
   }
   .heading-md {
     @apply text-lg font-bold tracking-tight uppercase;
+    font-family: var(--font-heading);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
       tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
       bg-(--color-store-primary) text-white hover:bg-(--color-store-primary-hover);
+    border-radius: var(--radius-store, 0);
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
       tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-white/70 text-(--color-store-text) hover:border-white hover:bg-white/10;
+    border-radius: var(--radius-store, 0);
   }
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
       tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-(--color-store-border) bg-black text-white hover:bg-(--color-store-surface-2);
+    border-radius: var(--radius-store, 0);
   }
   .btn-outline-ink {
-    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
       tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-(--color-store-ink)/30 text-(--color-store-ink) hover:bg-black/5;
+    border-radius: var(--radius-store, 0);
   }
 
   .icon-btn {
@@ -176,10 +183,12 @@ button {
     @apply w-full border border-(--color-store-border) bg-(--color-store-surface-2) px-3 py-2.5 text-sm text-(--color-store-text)
       outline-none transition-colors placeholder:text-(--color-store-text-faint)
       focus:border-(--color-store-primary);
+    border-radius: var(--radius-store, 0);
   }
   .field-input-light {
     @apply w-full border border-black/15 bg-white px-3 py-2.5 text-sm text-(--color-store-ink)
       outline-none transition-colors placeholder:text-black/40 focus:border-(--color-store-ink);
+    border-radius: var(--radius-store, 0);
   }
 
   /* Unifying tone for full-bleed editorial/lifestyle photography (hero,

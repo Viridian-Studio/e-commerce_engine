@@ -82,7 +82,11 @@ export class StorefrontService {
 
   async addItem(storeId: string, token: string | undefined, dto: AddCartItemDto): Promise<Cart> {
     const store = await this.stores.findById(storeId);
-    const cart = await this.carts.getOrCreate(storeId, token, undefined, store.currency);
+    // Use the product's own currency (sent by the storefront) rather than the
+    // store's current currency — they can differ if the store's currency was
+    // changed after the product was priced. The price number is in the
+    // product's currency, so the cart must match.
+    const cart = await this.carts.getOrCreate(storeId, token, undefined, dto.currency ?? store.currency);
     return this.carts.addItem(cart._id, dto);
   }
 
@@ -152,11 +156,28 @@ export class StorefrontService {
       },
       shippingAddress: dto.shippingAddress,
       billingAddress: dto.billingAddress ?? dto.shippingAddress,
-      paymentProvider: 'manual',
+      paymentProvider: dto.paymentMethod === 'card' ? 'stripe' : 'manual',
       paymentMethod: dto.paymentMethod,
     });
 
     await this.carts.clear(cart._id);
     return order;
+  }
+
+  /** Fetches an order for Stripe PaymentIntent creation (must belong to the store). */
+  async getOrderForPayment(storeId: string, orderId: string): Promise<Order> {
+    const order = await this.orders.findById(orderId);
+    if (!order || order.storeId !== storeId) throw new NotFoundException('Order not found');
+    return order;
+  }
+
+  /** Saves the Stripe PaymentIntent id on the order so the webhook can match it. */
+  async setPaymentIntentId(orderId: string, intentId: string): Promise<void> {
+    await this.orders.setPaymentTransactionId(orderId, intentId, 'stripe');
+  }
+
+  /** Lists a customer's orders in the current store (store-scoped, customer-scoped). */
+  async listCustomerOrders(storeId: string, customerId: string, query: ListQueryDto): Promise<Paginated<Order>> {
+    return this.orders.findAll(storeId, { ...query, customerId });
   }
 }

@@ -1,12 +1,16 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StorefrontService } from './storefront.service';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public, IS_PUBLIC_KEY } from '../../common/decorators/public.decorator';
 import { CurrentStore } from '../../common/decorators/current-store.decorator';
+import { CurrentCustomer } from '../../common/decorators/current-customer.decorator';
+import { CustomerJwtAuthGuard } from '../customers/guards/customer-jwt.guard';
 import { ListQueryDto } from '../../common/dto/list-query.dto';
 import { AddCartItemDto, UpdateCartItemDto } from '../carts/dto/cart.dto';
 import { CheckoutDto } from './dto/checkout.dto';
-import type { Brand, Cart, Category, Collection, Order, Paginated, Product, Store } from '@ecom/types';
+import { StripePaymentProvider } from '../payments/stripe.provider';
+import { PaymentsService } from '../payments/payments.service';
+import type { Brand, Cart, Category, Collection, CustomerAuthUser, Order, Paginated, Product, Store } from '@ecom/types';
 
 /**
  * Public, customer-facing API. Any storefront (Angular, React, Vue, ...) can
@@ -17,12 +21,22 @@ import type { Brand, Cart, Category, Collection, Order, Paginated, Product, Stor
 @Public()
 @Controller('storefront')
 export class StorefrontController {
-  constructor(private readonly service: StorefrontService) {}
+  constructor(
+    private readonly service: StorefrontService,
+    private readonly stripe: StripePaymentProvider,
+    private readonly payments: PaymentsService,
+  ) {}
 
   @Get('store')
   @ApiOperation({ summary: 'Resolve the active store by slug' })
   getStore(@Query('slug') slug?: string): Promise<Store> {
     return this.service.resolveStore(slug);
+  }
+
+  @Get('payments/config')
+  @ApiOperation({ summary: 'Public Stripe publishable key for the storefront' })
+  async getPaymentConfig(@CurrentStore() storeId: string): Promise<{ publishableKey: string | null }> {
+    return { publishableKey: await this.stripe.publishableKey(storeId) };
   }
 
   @Get('products')
@@ -131,6 +145,50 @@ export class StorefrontController {
   checkout(@CurrentStore() storeId: string, @Body() dto: CheckoutDto): Promise<Order> {
     this.requireStore(storeId);
     return this.service.checkout(storeId, dto);
+  }
+
+  @Post('payments/intent')
+  @ApiOperation({ summary: 'Create a Stripe PaymentIntent for an order' })
+  async createPaymentIntent(
+    @CurrentStore() storeId: string,
+    @Body() body: { orderId: string; email?: string },
+  ): Promise<{ id: string; clientSecret: string }> {
+    this.requireStore(storeId);
+    const order = await this.service.getOrderForPayment(storeId, body.orderId);
+    const intent = await this.stripe.createPaymentIntent({
+      orderId: String(order._id),
+      amount: order.totals.total,
+      currency: order.totals.currency,
+      email: body.email,
+      storeId,
+    });
+    // Save the PI id on the order so the webhook / confirm endpoint can match it.
+    await this.service.setPaymentIntentId(String(order._id), intent.id);
+    return intent;
+  }
+
+  @Post('payments/confirm')
+  @ApiOperation({ summary: 'Confirm a Stripe PaymentIntent status and mark the order paid if succeeded (webhook fallback)' })
+  async confirmPayment(
+    @CurrentStore() storeId: string,
+    @Body() body: { paymentIntentId: string },
+  ): Promise<{ status: string; paid: boolean }> {
+    this.requireStore(storeId);
+    return this.payments.confirmPaymentByIntentId(body.paymentIntentId, storeId);
+  }
+
+  @UseGuards(CustomerJwtAuthGuard)
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @ApiBearerAuth()
+  @Get('orders')
+  @ApiOperation({ summary: "List the authenticated customer's orders in the current store" })
+  listMyOrders(
+    @CurrentStore() storeId: string,
+    @CurrentCustomer() customer: CustomerAuthUser,
+    @Query() query: ListQueryDto,
+  ): Promise<Paginated<Order>> {
+    this.requireStore(storeId);
+    return this.service.listCustomerOrders(storeId, customer.id, query);
   }
 
   private requireStore(storeId: string | null): void {

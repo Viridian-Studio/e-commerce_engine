@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
-import { StoreStatus, StoreThemeConfig } from '@ecom/types';
+import { StoreStatus, StoreThemeConfig, StorePaymentConfig } from '@ecom/types';
 
 @Schema({ _id: true, timestamps: true })
 export class Store {
@@ -38,10 +38,33 @@ export class Store {
       accentColor: { type: String },
       logoUrl: { type: String },
       faviconUrl: { type: String },
+      appearance: { type: String, enum: ['dark', 'light', 'auto'], default: 'dark' },
+      fontFamily: { type: String },
+      headingFontFamily: { type: String },
+      borderRadius: { type: Number, default: 0 },
+      announcement: {
+        type: {
+          text: { type: String },
+          color: { type: String },
+          background: { type: String },
+          enabled: { type: Boolean, default: false },
+        },
+        default: {},
+      },
     },
     default: {},
   })
   theme: StoreThemeConfig;
+
+  @Prop({
+    type: {
+      stripeSecretKey: { type: String },
+      stripePublishableKey: { type: String },
+      stripeWebhookSecret: { type: String },
+    },
+    default: {},
+  })
+  payment: StorePaymentConfig;
 
   @Prop({ type: Object, default: {} })
   settings: Record<string, unknown>;

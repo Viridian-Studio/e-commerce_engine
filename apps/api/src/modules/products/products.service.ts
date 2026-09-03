@@ -36,6 +36,10 @@ export class ProductsService {
     if (query.brandId) filter.brandId = new Types.ObjectId(query.brandId);
     if (query.categoryId) filter.categoryIds = new Types.ObjectId(query.categoryId);
     if (query.collectionId) filter.collectionIds = new Types.ObjectId(query.collectionId);
+    if (query.ids) {
+      const ids = query.ids.split(',').map((id) => id.trim()).filter(Boolean);
+      if (ids.length > 0) filter._id = { $in: ids.map((id) => new Types.ObjectId(id)) };
+    }
     const sort: Record<string, 1 | -1> = { [sortField ?? 'createdAt']: sortOrder };
     const [items, total] = await Promise.all([
       this.model.find(filter).sort(sort).skip((page - 1) * limit).limit(limit).exec(),

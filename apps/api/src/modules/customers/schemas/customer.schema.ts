@@ -26,6 +26,14 @@ export class Customer {
   @Prop({ type: String, enum: CustomerStatus, default: CustomerStatus.ACTIVE })
   status: CustomerStatus;
 
+  /**
+   * Hashed password for storefront self-service auth. `select: false` keeps it
+   * out of normal queries; the auth service selects it explicitly with
+   * `+passwordHash`. Admin-created customers (no password) simply can't log in.
+   */
+  @Prop({ type: String, select: false })
+  passwordHash?: string;
+
   @Prop({
     type: [
       {

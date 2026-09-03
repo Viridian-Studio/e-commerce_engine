@@ -41,7 +41,9 @@ const NEW_WINDOW_DAYS = 21;
 
         <button
           type="button"
-          class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center bg-white/90 text-(--color-store-ink) transition-transform hover:scale-105"
+          class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center bg-white/90 transition-transform hover:scale-105"
+          [class.text-(--color-store-primary)]="wished()"
+          [class.text-(--color-store-ink)]="!wished()"
           [attr.aria-pressed]="wished()"
           [attr.aria-label]="'nav.wishlist' | t"
           (click)="onWishlist($event)"

@@ -4,84 +4,338 @@
     Stores
   </a>
   <h1 class="text-lg font-semibold text-(--color-text)">{{ isNew() ? 'New store' : 'Edit store' }}</h1>
+  @if (!isNew()) {
+    <p class="mt-0.5 text-sm text-(--color-text-muted)">Changes are saved without leaving this page.</p>
+  }
 </div>
 
 @if (loading()) {
-  <div class="card h-64 animate-pulse"></div>
+  <div class="card h-96 animate-pulse"></div>
 } @else {
-  <div class="card max-w-2xl space-y-4 p-5">
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label class="label">Store name</label>
-        <input type="text" class="input" [(ngModel)]="form.name" />
+  <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
+    <!-- Main form area -->
+    <div class="card overflow-hidden">
+      <!-- Tabs -->
+      <div class="flex border-b border-(--color-border)">
+        <button
+          type="button"
+          class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          [class.border-(--color-brand)]="activeTab() === 'general'"
+          [class.text-(--color-text)]="activeTab() === 'general'"
+          [class.text-(--color-text-muted)]="activeTab() !== 'general'"
+          [class.border-transparent]="activeTab() !== 'general'"
+          (click)="activeTab.set('general')"
+        >General</button>
+        <button
+          type="button"
+          class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          [class.border-(--color-brand)]="activeTab() === 'appearance'"
+          [class.text-(--color-text)]="activeTab() === 'appearance'"
+          [class.text-(--color-text-muted)]="activeTab() !== 'appearance'"
+          [class.border-transparent]="activeTab() !== 'appearance'"
+          (click)="activeTab.set('appearance')"
+        >Appearance</button>
+        <button
+          type="button"
+          class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          [class.border-(--color-brand)]="activeTab() === 'announcement'"
+          [class.text-(--color-text)]="activeTab() === 'announcement'"
+          [class.text-(--color-text-muted)]="activeTab() !== 'announcement'"
+          [class.border-transparent]="activeTab() !== 'announcement'"
+          (click)="activeTab.set('announcement')"
+        >Announcement</button>
+        <button
+          type="button"
+          class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          [class.border-(--color-brand)]="activeTab() === 'payments'"
+          [class.text-(--color-text)]="activeTab() === 'payments'"
+          [class.text-(--color-text-muted)]="activeTab() !== 'payments'"
+          [class.border-transparent]="activeTab() !== 'payments'"
+          (click)="activeTab.set('payments')"
+        >Payments</button>
       </div>
-      <div>
-        <label class="label">Slug</label>
-        <input type="text" class="input" [(ngModel)]="form.slug" />
+
+      <!-- Tab content -->
+      <div class="space-y-5 p-5">
+        <!-- General -->
+        @if (activeTab() === 'general') {
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="label">Store name</label>
+              <input type="text" class="input" [ngModel]="form().name" (ngModelChange)="patch({ name: $event })" />
+            </div>
+            <div>
+              <label class="label">Slug</label>
+              <input type="text" class="input" [ngModel]="form().slug" (ngModelChange)="patch({ slug: $event })" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="label">Domain</label>
+              <input type="text" class="input" placeholder="shop.example.com" [ngModel]="form().domain" (ngModelChange)="patch({ domain: $event })" />
+            </div>
+            <div>
+              <label class="label">Contact email</label>
+              <input type="email" class="input" [ngModel]="form().contactEmail" (ngModelChange)="patch({ contactEmail: $event })" />
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div>
+              <label class="label">Currency</label>
+              <input type="text" class="input uppercase" maxlength="3" [ngModel]="form().currency" (ngModelChange)="patch({ currency: $event })" />
+            </div>
+            <div>
+              <label class="label">Locale</label>
+              <input type="text" class="input" [ngModel]="form().locale" (ngModelChange)="patch({ locale: $event })" />
+            </div>
+            <div>
+              <label class="label">Timezone</label>
+              <input type="text" class="input" [ngModel]="form().timezone" (ngModelChange)="patch({ timezone: $event })" />
+            </div>
+          </div>
+          <div>
+            <label class="label">Status</label>
+            <select class="input" [ngModel]="form().status" (ngModelChange)="patch({ status: $event })">
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+        }
+
+        <!-- Appearance -->
+        @if (activeTab() === 'appearance') {
+          <!-- Colors -->
+          <div>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Colors</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="label">Primary color</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [ngModel]="form().primaryColor" (ngModelChange)="patch({ primaryColor: $event })" />
+                  <input type="text" class="input" [ngModel]="form().primaryColor" (ngModelChange)="patch({ primaryColor: $event })" />
+                </div>
+              </div>
+              <div>
+                <label class="label">Accent / base color</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [ngModel]="form().accentColor" (ngModelChange)="patch({ accentColor: $event })" />
+                  <input type="text" class="input" [ngModel]="form().accentColor" (ngModelChange)="patch({ accentColor: $event })" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance mode -->
+          <div>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Appearance mode</p>
+            <div class="grid grid-cols-3 gap-3">
+              <button
+                type="button"
+                class="rounded-lg border p-3 text-center text-sm transition-colors"
+                [class.border-(--color-brand)]="form().appearance === 'dark'"
+                [class.bg-(--color-brand-soft)]="form().appearance === 'dark'"
+                [class.border-(--color-border)]="form().appearance !== 'dark'"
+                (click)="patch({ appearance: 'dark' })"
+              >Dark</button>
+              <button
+                type="button"
+                class="rounded-lg border p-3 text-center text-sm transition-colors"
+                [class.border-(--color-brand)]="form().appearance === 'light'"
+                [class.bg-(--color-brand-soft)]="form().appearance === 'light'"
+                [class.border-(--color-border)]="form().appearance !== 'light'"
+                (click)="patch({ appearance: 'light' })"
+              >Light</button>
+              <button
+                type="button"
+                class="rounded-lg border p-3 text-center text-sm transition-colors"
+                [class.border-(--color-brand)]="form().appearance === 'auto'"
+                [class.bg-(--color-brand-soft)]="form().appearance === 'auto'"
+                [class.border-(--color-border)]="form().appearance !== 'auto'"
+                (click)="patch({ appearance: 'auto' })"
+              >Auto</button>
+            </div>
+          </div>
+
+          <!-- Typography -->
+          <div>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Typography</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="label">Body font</label>
+                <select class="input" [ngModel]="form().fontFamily" (ngModelChange)="patch({ fontFamily: $event })">
+                  @for (font of fontPresets; track font.value) {
+                    <option [value]="font.value">{{ font.label }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="label">Heading font</label>
+                <select class="input" [ngModel]="form().headingFontFamily" (ngModelChange)="patch({ headingFontFamily: $event })">
+                  <option value="">Inherit from body</option>
+                  @for (font of fontPresets; track font.value) {
+                    <option [value]="font.value">{{ font.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Border radius -->
+          <div>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Corner radius</p>
+            <div class="flex items-center gap-3">
+              <input type="range" min="-1" max="24" step="1" class="flex-1" [ngModel]="form().borderRadius" (ngModelChange)="patch({ borderRadius: +$event })" />
+              <span class="w-16 text-sm text-(--color-text-muted)">{{ form().borderRadius < 0 ? 'pill' : form().borderRadius + 'px' }}</span>
+            </div>
+          </div>
+
+          <!-- Logo -->
+          <div>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Logo & favicon</p>
+            <div>
+              <label class="label">Logo URL</label>
+              <input type="text" class="input" placeholder="https://..." [ngModel]="form().logoUrl" (ngModelChange)="patch({ logoUrl: $event })" />
+            </div>
+          </div>
+        }
+
+        <!-- Announcement -->
+        @if (activeTab() === 'announcement') {
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-(--color-text)">Announcement bar</p>
+              <p class="text-xs text-(--color-text-muted)">A colored strip shown above the storefront header.</p>
+            </div>
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-(--color-text-muted)">
+              <input type="checkbox" class="h-4 w-4 rounded" [ngModel]="form().announcementEnabled" (ngModelChange)="patch({ announcementEnabled: $event })" />
+              Enabled
+            </label>
+          </div>
+
+          @if (form().announcementEnabled) {
+            <div class="space-y-4 border-t border-(--color-border) pt-4">
+              <div>
+                <label class="label">Text</label>
+                <input type="text" class="input" placeholder="Ingyenes szállítás 50€ felett" [ngModel]="form().announcementText" (ngModelChange)="patch({ announcementText: $event })" />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="label">Text color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [ngModel]="form().announcementColor" (ngModelChange)="patch({ announcementColor: $event })" />
+                    <input type="text" class="input" [ngModel]="form().announcementColor" (ngModelChange)="patch({ announcementColor: $event })" />
+                  </div>
+                </div>
+                <div>
+                  <label class="label">Background</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [ngModel]="form().announcementBackground" (ngModelChange)="patch({ announcementBackground: $event })" />
+                    <input type="text" class="input" placeholder="Primary color" [ngModel]="form().announcementBackground" (ngModelChange)="patch({ announcementBackground: $event })" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Live announcement preview -->
+              <div>
+                <p class="label">Preview</p>
+                <div
+                  class="rounded-lg px-4 py-2.5 text-center text-sm font-medium"
+                  [style.color]="form().announcementColor || '#ffffff'"
+                  [style.background]="form().announcementBackground || form().primaryColor"
+                >
+                  {{ form().announcementText || 'Your announcement text appears here' }}
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="rounded-lg border border-dashed border-(--color-border) px-4 py-8 text-center text-sm text-(--color-text-faint)">
+              Announcement bar is disabled
+            </div>
+          }
+        }
+
+        <!-- Payments -->
+        @if (activeTab() === 'payments') {
+          <div class="mb-4 rounded-lg bg-(--color-surface-2) px-4 py-3 text-xs text-(--color-text-muted)">
+            Per-store Stripe keys. Leave blank to fall back to the global <code class="text-(--color-text)">STRIPE_*</code> environment variables.
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="label">Secret key</label>
+              <input type="text" class="input font-mono text-xs" placeholder="sk_test_... / sk_live_..." [ngModel]="form().stripeSecretKey" (ngModelChange)="patch({ stripeSecretKey: $event })" autocomplete="off" />
+            </div>
+            <div>
+              <label class="label">Publishable key</label>
+              <input type="text" class="input font-mono text-xs" placeholder="pk_test_... / pk_live_..." [ngModel]="form().stripePublishableKey" (ngModelChange)="patch({ stripePublishableKey: $event })" autocomplete="off" />
+            </div>
+            <div>
+              <label class="label">Webhook secret</label>
+              <input type="text" class="input font-mono text-xs" placeholder="whsec_..." [ngModel]="form().stripeWebhookSecret" (ngModelChange)="patch({ stripeWebhookSecret: $event })" autocomplete="off" />
+            </div>
+          </div>
+        }
       </div>
-    </div>
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label class="label">Domain</label>
-        <input type="text" class="input" placeholder="shop.example.com" [(ngModel)]="form.domain" />
+
+      <!-- Sticky save bar -->
+      <div class="flex items-center justify-between gap-3 border-t border-(--color-border) bg-(--color-surface) px-5 py-3">
+        <a routerLink="/stores" class="btn-ghost">Back to stores</a>
+        <button type="button" class="btn-primary" [disabled]="saving()" (click)="save()">
+          {{ saving() ? 'Saving…' : (isNew() ? 'Create store' : 'Save changes') }}
+        </button>
       </div>
-      <div>
-        <label class="label">Contact email</label>
-        <input type="email" class="input" [(ngModel)]="form.contactEmail" />
-      </div>
-    </div>
-    <div class="grid grid-cols-3 gap-4">
-      <div>
-        <label class="label">Currency</label>
-        <input type="text" class="input uppercase" maxlength="3" [(ngModel)]="form.currency" />
-      </div>
-      <div>
-        <label class="label">Locale</label>
-        <input type="text" class="input" [(ngModel)]="form.locale" />
-      </div>
-      <div>
-        <label class="label">Timezone</label>
-        <input type="text" class="input" [(ngModel)]="form.timezone" />
-      </div>
-    </div>
-    <div>
-      <label class="label">Status</label>
-      <select class="input" [(ngModel)]="form.status">
-        <option value="active">Active</option>
-        <option value="draft">Draft</option>
-        <option value="archived">Archived</option>
-      </select>
     </div>
 
-    <div class="border-t border-(--color-border) pt-4">
-      <p class="mb-3 text-sm font-medium text-(--color-text)">Theme configuration</p>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="label">Primary color</label>
-          <div class="flex items-center gap-2">
-            <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [(ngModel)]="form.primaryColor" />
-            <input type="text" class="input" [(ngModel)]="form.primaryColor" />
+    <!-- Live theme preview (only on appearance tab) -->
+    @if (activeTab() === 'appearance') {
+      <div class="lg:sticky lg:top-6">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Live preview</p>
+        <div
+          class="overflow-hidden rounded-xl border border-(--color-border)"
+          [style]="previewStyle()"
+          [style.background]="'var(--pv-bg)'"
+          [style.color]="'var(--pv-text)'"
+          [style.font-family]="'var(--pv-font)'"
+        >
+          <!-- Announcement bar preview -->
+          @if (form().announcementEnabled && form().announcementText) {
+            <div
+              class="px-3 py-1.5 text-center text-xs font-medium"
+              [style.color]="form().announcementColor || '#ffffff'"
+              [style.background]="form().announcementBackground || form().primaryColor"
+            >{{ form().announcementText }}</div>
+          }
+          <!-- Header -->
+          <div class="flex items-center justify-between px-4 py-3" [style.border-bottom]="'1px solid var(--pv-border)'">
+            <span class="text-sm font-bold" [style.font-family]="'var(--pv-heading-font)'">{{ form().name || 'Store name' }}</span>
+            <div
+              class="px-3 py-1.5 text-xs font-semibold text-white"
+              [style.background]="'var(--pv-primary)'"
+              [style.border-radius]="'var(--pv-radius)'"
+            >Shop now</div>
           </div>
-        </div>
-        <div>
-          <label class="label">Accent color</label>
-          <div class="flex items-center gap-2">
-            <input type="color" class="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) bg-transparent" [(ngModel)]="form.accentColor" />
-            <input type="text" class="input" [(ngModel)]="form.accentColor" />
+          <!-- Product card -->
+          <div class="p-4">
+            <div
+              class="p-3"
+              [style.background]="'var(--pv-surface)'"
+              [style.border]="'1px solid var(--pv-border)'"
+              [style.border-radius]="'var(--pv-radius)'"
+            >
+              <div class="mb-3 h-24 rounded" [style.background]="'var(--pv-border)'"></div>
+              <p class="mb-1 text-sm font-semibold" [style.font-family]="'var(--pv-heading-font)'">Product title</p>
+              <div class="flex items-center justify-between">
+                <span class="text-xs opacity-70">$49.00</span>
+                <div
+                  class="px-2.5 py-1 text-xs font-medium text-white"
+                  [style.background]="'var(--pv-primary)'"
+                  [style.border-radius]="'var(--pv-radius)'"
+                >Add</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="mt-4">
-        <label class="label">Logo URL</label>
-        <input type="text" class="input" [(ngModel)]="form.logoUrl" />
-      </div>
-    </div>
-
-    <div class="flex justify-end gap-2 pt-2">
-      <a routerLink="/stores" class="btn-secondary">Cancel</a>
-      <button type="button" class="btn-primary" [disabled]="saving()" (click)="save()">
-        {{ saving() ? 'Saving…' : 'Save store' }}
-      </button>
-    </div>
+    }
   </div>
 }

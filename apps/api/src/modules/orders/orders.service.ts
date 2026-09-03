@@ -119,6 +119,16 @@ export class OrdersService {
     return item.toJSON<OrderType>();
   }
 
+  /** Saves the payment provider + transaction id (e.g. Stripe PaymentIntent id) on an order. */
+  async setPaymentTransactionId(id: string, transactionId: string, provider: string): Promise<void> {
+    await this.model
+      .updateOne(
+        { _id: new Types.ObjectId(id) },
+        { 'payment.transactionId': transactionId, 'payment.provider': provider },
+      )
+      .exec();
+  }
+
   async remove(id: string): Promise<void> {
     await this.model.findByIdAndDelete(id).exec();
   }

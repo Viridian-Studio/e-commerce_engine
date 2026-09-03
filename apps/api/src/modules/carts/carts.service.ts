@@ -57,6 +57,12 @@ export class CartsService {
 
   async addItem(cartId: string, dto: AddCartItemDto): Promise<CartType> {
     const cart = await this.findDocumentById(cartId);
+    // If the cart is still empty and the incoming item carries a currency that
+    // differs from the cart's (e.g. the cart was created via POST /cart with
+    // the store's old currency), align the cart before adding the first item.
+    if (dto.currency && cart.items.length === 0 && cart.currency !== dto.currency) {
+      cart.currency = dto.currency;
+    }
     const existingIdx = cart.items.findIndex(
       (i) =>
         i.productId.toString() === dto.productId &&
@@ -97,6 +103,24 @@ export class CartsService {
 
   async clear(cartId: string): Promise<void> {
     await this.model.updateOne({ _id: cartId }, { items: [] }).exec();
+  }
+
+  /**
+   * Attaches a customer to a guest cart (identified by its token), so the cart
+   * follows the customer after login/register. If no token is supplied (or the
+   * token doesn't match a cart), falls back to the customer's existing cart,
+   * creating one if needed. The cart's token is preserved either way.
+   */
+  async claimCart(storeId: string, customerId: string, token?: string): Promise<CartType> {
+    if (token) {
+      const cart = await this.model.findOne({ storeId, token }).exec();
+      if (cart) {
+        cart.customerId = new Types.ObjectId(customerId);
+        await cart.save();
+        return cart.toJSON<CartType>();
+      }
+    }
+    return this.getOrCreate(storeId, undefined, customerId);
   }
 
   totals(cart: CartType): { subtotal: number; itemCount: number; currency: string } {

@@ -13,6 +13,7 @@ export interface ProductListParams {
   categoryId?: string;
   collectionId?: string;
   brandId?: string;
+  ids?: string;
 }
 
 @Injectable({ providedIn: 'root' })

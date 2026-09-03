@@ -135,49 +135,62 @@
 
           @case ('payment') {
             <div class="flex flex-col gap-5">
-              <div>
-                <p class="field-label">{{ 'checkout.paymentMethod' | t }}</p>
-                <div class="flex flex-col gap-2">
-                  <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
-                    <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'card'" (change)="paymentMethod.set('card')" class="accent-(--color-store-primary)" />
-                    {{ 'checkout.card' | t }}
-                  </label>
-                  <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
-                    <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cod'" (change)="paymentMethod.set('cod')" class="accent-(--color-store-primary)" />
-                    {{ 'checkout.cod' | t }}
-                  </label>
+              @if (!stripeReady()) {
+                <div>
+                  <p class="field-label">{{ 'checkout.paymentMethod' | t }}</p>
+                  <div class="flex flex-col gap-2">
+                    <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
+                      <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'card'" (change)="paymentMethod.set('card')" class="accent-(--color-store-primary)" />
+                      {{ 'checkout.card' | t }}
+                    </label>
+                    <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
+                      <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cod'" (change)="paymentMethod.set('cod')" class="accent-(--color-store-primary)" />
+                      {{ 'checkout.cod' | t }}
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label class="field-label" for="discount">{{ 'checkout.discountCode' | t }}</label>
-                <div class="relative">
-                  <input
-                    id="discount"
-                    type="text"
-                    class="field-input pr-9"
-                    [placeholder]="'checkout.discountPlaceholder' | t"
-                    [value]="discountCode()"
-                    (input)="onDiscountCodeInput($any($event.target).value)"
-                  />
-                  @if (discountChecking()) {
-                    <span class="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-(--color-store-text-faint)">…</span>
-                  } @else if (discountPreview()) {
-                    <span class="absolute top-1/2 right-3 -translate-y-1/2 text-(--color-store-primary)">&#10003;</span>
+                <div>
+                  <label class="field-label" for="discount">{{ 'checkout.discountCode' | t }}</label>
+                  <div class="relative">
+                    <input
+                      id="discount"
+                      type="text"
+                      class="field-input pr-9"
+                      [placeholder]="'checkout.discountPlaceholder' | t"
+                      [value]="discountCode()"
+                      (input)="onDiscountCodeInput($any($event.target).value)"
+                    />
+                    @if (discountChecking()) {
+                      <span class="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-(--color-store-text-faint)">…</span>
+                    } @else if (discountPreview()) {
+                      <span class="absolute top-1/2 right-3 -translate-y-1/2 text-(--color-store-primary)">&#10003;</span>
+                    }
+                  </div>
+                  @if (discountPreview(); as d) {
+                    <p class="animate-fade-up mt-1.5 text-xs text-(--color-store-primary)">
+                      „{{ d.code }}” &mdash; <app-product-price [price]="d.amount" [currency]="cart.currency()" /> {{ 'checkout.discount' | t | lowercase }}
+                    </p>
+                  } @else if (discountError()) {
+                    <p class="mt-1.5 text-xs text-(--color-store-text-muted)">{{ discountError() }}</p>
                   }
                 </div>
-                @if (discountPreview(); as d) {
-                  <p class="animate-fade-up mt-1.5 text-xs text-(--color-store-primary)">
-                    „{{ d.code }}” &mdash; <app-product-price [price]="d.amount" [currency]="cart.currency()" /> {{ 'checkout.discount' | t | lowercase }}
-                  </p>
-                } @else if (discountError()) {
-                  <p class="mt-1.5 text-xs text-(--color-store-text-muted)">{{ discountError() }}</p>
-                }
-              </div>
 
-              <button type="button" class="btn-primary mt-2 transition-transform active:scale-95" [disabled]="placing()" (click)="placeOrder()">
-                {{ placing() ? ('checkout.placingOrder' | t) : ('checkout.placeOrder' | t) }}
-              </button>
+                <button type="button" class="btn-primary mt-2 transition-transform active:scale-95" [disabled]="placing()" (click)="placeOrder()">
+                  {{ placing() ? ('checkout.placingOrder' | t) : ('checkout.placeOrder' | t) }}
+                </button>
+              } @else {
+                <div>
+                  <p class="field-label">{{ 'checkout.card' | t }}</p>
+                  <div #stripeContainer class="min-h-[120px] border border-(--color-store-border) p-4"></div>
+                </div>
+                @if (stripeError()) {
+                  <p class="text-xs text-red-500">{{ stripeError() }}</p>
+                }
+                <button type="button" class="btn-primary mt-2 transition-transform active:scale-95" [disabled]="confirming()" (click)="confirmStripePayment()">
+                  {{ confirming() ? ('checkout.placingOrder' | t) : ('checkout.placeOrder' | t) }}
+                </button>
+              }
             </div>
           }
         }
@@ -188,7 +201,7 @@
         <div class="flex flex-col gap-2 text-sm">
           <div class="flex items-center justify-between">
             <span class="text-(--color-store-text-muted)">{{ 'cart.subtotal' | t }}</span>
-            <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" />
+            <span>{{ currencyService.formatSelected(cart.displaySubtotal()) }}</span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-(--color-store-text-muted)">{{ 'checkout.shipping' | t }}</span>

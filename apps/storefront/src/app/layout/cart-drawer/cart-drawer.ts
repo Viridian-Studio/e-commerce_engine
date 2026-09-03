@@ -1,18 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from '../../core/api/cart.service';
-import { ProductPrice } from '../../shared/components/product-price/product-price';
+import { CurrencyService } from '../../core/currency.service';
 import { CartItemRow } from '../../shared/components/cart-item-row/cart-item-row';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-cart-drawer',
-  imports: [ProductPrice, CartItemRow, EmptyState, TranslatePipe],
+  imports: [CartItemRow, EmptyState, TranslatePipe],
   templateUrl: './cart-drawer.html',
 })
 export class CartDrawer {
   protected readonly cart = inject(CartService);
+  protected readonly currencyService = inject(CurrencyService);
   private readonly router = inject(Router);
 
   protected updateQuantity(itemId: string | undefined, quantity: number): void {

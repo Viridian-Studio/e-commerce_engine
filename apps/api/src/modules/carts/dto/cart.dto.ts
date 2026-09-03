@@ -32,6 +32,11 @@ export class AddCartItemDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  currency?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   image?: string;
 }
 

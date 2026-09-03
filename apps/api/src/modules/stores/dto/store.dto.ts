@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 import { StoreStatus } from '@ecom/types';
 
 export class CreateStoreDto {
@@ -37,6 +37,35 @@ export class CreateStoreDto {
   @IsOptional()
   @IsString()
   contactEmail?: string;
+
+  @ApiPropertyOptional({ description: 'Store theme: primary/accent colors, logo, favicon, appearance, fonts, radius, announcement' })
+  @IsOptional()
+  @IsObject()
+  theme?: {
+    primaryColor?: string;
+    accentColor?: string;
+    logoUrl?: string;
+    faviconUrl?: string;
+    appearance?: 'dark' | 'light' | 'auto';
+    fontFamily?: string;
+    headingFontFamily?: string;
+    borderRadius?: number;
+    announcement?: {
+      text?: string;
+      color?: string;
+      background?: string;
+      enabled?: boolean;
+    };
+  };
+
+  @ApiPropertyOptional({ description: 'Stripe keys for this store' })
+  @IsOptional()
+  @IsObject()
+  payment?: {
+    stripeSecretKey?: string;
+    stripePublishableKey?: string;
+    stripeWebhookSecret?: string;
+  };
 }
 
 export class UpdateStoreDto extends PartialType(CreateStoreDto) {}

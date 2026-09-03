@@ -24,7 +24,7 @@
           <h2 class="heading-md mb-4 text-sm">{{ 'cart.summary' | t }}</h2>
           <div class="flex items-center justify-between text-sm">
             <span class="text-(--color-store-text-muted)">{{ 'cart.subtotal' | t }}</span>
-            <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" />
+            <span>{{ currencyService.formatSelected(cart.displaySubtotal()) }}</span>
           </div>
           <p class="mt-3 text-xs text-(--color-store-text-muted)">{{ 'cart.shippingNote' | t }}</p>
           <button type="button" class="btn-primary mt-5 w-full" (click)="checkout()">{{ 'cart.checkout' | t }}</button>

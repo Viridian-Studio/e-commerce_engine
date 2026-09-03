@@ -1,0 +1,29 @@
+<section class="section-dark py-12">
+  <div class="container-store px-4">
+    <!-- Header -->
+    <div class="mb-8">
+      <p class="eyebrow">{{ 'nav.wishlist' | t }}</p>
+      <h1 class="heading-lg mt-1">{{ 'nav.wishlist' | t }}</h1>
+      @if (count() > 0) {
+        <p class="mt-1 text-sm text-(--color-store-text-muted)">{{ count() }} termék</p>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="aspect-[4/5] animate-pulse rounded-lg border border-(--color-store-border) bg-(--color-store-surface)"></div>
+        }
+      </div>
+    } @else if (!hasItems()) {
+      <app-empty-state title="Még nincs kedvenced" message="Mentsz termékeket a szív ikonnal, és itt megtalálod őket.">
+        <a routerLink="/" class="btn-primary mt-2">{{ 'auth.continueShopping' | t }}</a>
+      </app-empty-state>
+    } @else {
+      <app-product-grid [products]="products()" />
+      <div class="mt-8 flex justify-center">
+        <a routerLink="/" class="btn-outline">{{ 'auth.continueShopping' | t }}</a>
+      </div>
+    }
+  </div>
+</section>

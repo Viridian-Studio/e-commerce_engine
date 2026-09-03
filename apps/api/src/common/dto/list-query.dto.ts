@@ -58,6 +58,11 @@ export class ListQueryDto implements ListQuery {
   @IsOptional()
   @IsString()
   customerId?: string;
+
+  @ApiPropertyOptional({ description: 'Comma-separated product ids for batch lookup (e.g. wishlist)' })
+  @IsOptional()
+  @IsString()
+  ids?: string;
 }
 
 export function buildPaginationMeta(page: number, limit: number, total: number): PaginationMeta {

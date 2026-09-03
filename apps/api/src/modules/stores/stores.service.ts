@@ -36,6 +36,22 @@ export class StoresService {
     const update: Record<string, unknown> = { ...dto };
     if (dto.slug) update.slug = slugify(dto.slug);
     else if (dto.name) update.slug = slugify(dto.name);
+    // Merge theme/payment objects instead of overwriting them whole, so a
+    // partial PATCH (e.g. only primaryColor) doesn't wipe the other keys.
+    if (dto.theme) {
+      const existing = await this.storeModel.findById(id).select('theme').lean().exec();
+      const mergedTheme: Record<string, unknown> = { ...(existing?.theme ?? {}), ...dto.theme };
+      // announcement is a nested object — merge it too
+      if (dto.theme.announcement) {
+        const existingAnnouncement = (existing?.theme as any)?.announcement ?? {};
+        mergedTheme.announcement = { ...existingAnnouncement, ...dto.theme.announcement };
+      }
+      update.theme = mergedTheme;
+    }
+    if (dto.payment) {
+      const existing = await this.storeModel.findById(id).select('payment').lean().exec();
+      update.payment = { ...(existing?.payment ?? {}), ...dto.payment };
+    }
     const store = await this.storeModel.findByIdAndUpdate(id, update, { new: true }).exec();
     if (!store) throw new NotFoundException('Store not found');
     return store.toJSON<StoreType>();

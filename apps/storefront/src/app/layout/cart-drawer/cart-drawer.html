@@ -38,7 +38,7 @@
         <p class="mb-4 text-xs text-(--color-store-text-muted)">{{ 'cart.shippingNote' | t }}</p>
         <div class="mb-4 flex items-center justify-between text-sm font-semibold">
           <span>{{ 'cart.subtotal' | t }}</span>
-          <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" size="lg" />
+          <span class="text-lg font-bold">{{ currencyService.formatSelected(cart.displaySubtotal()) }}</span>
         </div>
         <button type="button" class="btn-primary w-full" (click)="goToCheckout()">{{ 'cart.checkout' | t }}</button>
       </div>

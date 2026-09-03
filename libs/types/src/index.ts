@@ -120,13 +120,72 @@ export interface LoginResponse extends AuthTokens {
   user: AuthUser;
 }
 
+/* ---------------- Customer auth ---------------- */
+
+/**
+ * The customer identity embedded in the customer JWT and returned by
+ * /storefront/auth/{login,register,me}. Distinct from `AuthUser` (admin),
+ * which is scoped to the `User` model and `AdminRole`.
+ */
+export interface CustomerAuthUser {
+  id: ID;
+  storeId: ID;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
+
+export interface CustomerRegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
+
+export interface CustomerLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface CustomerAuthResponse extends AuthTokens {
+  customer: CustomerAuthUser;
+}
+
 /* ---------------- Store ---------------- */
+
+export type StoreAppearance = 'dark' | 'light' | 'auto';
 
 export interface StoreThemeConfig {
   primaryColor?: string;
   accentColor?: string;
   logoUrl?: string;
   faviconUrl?: string;
+  /** Visual mode — `dark` (default), `light`, or `auto` (follows OS preference). */
+  appearance?: StoreAppearance;
+  /** Body font family — a CSS font stack or a Google Fonts family name. */
+  fontFamily?: string;
+  /** Heading font family — falls back to `fontFamily` when not set. */
+  headingFontFamily?: string;
+  /** Global border radius for buttons, cards, inputs in px (0-24, or -1 for full/pill). */
+  borderRadius?: number;
+  /** Optional announcement bar above the header. */
+  announcement?: {
+    text?: string;
+    color?: string;
+    background?: string;
+    enabled?: boolean;
+  };
+}
+
+export interface StorePaymentConfig {
+  /** Stripe secret key (sk_live_... or sk_test_...). Server-only, never exposed to the storefront. */
+  stripeSecretKey?: string;
+  /** Stripe publishable key (pk_live_... or pk_test_...). Safe to expose to the browser. */
+  stripePublishableKey?: string;
+  /** Stripe webhook signing secret (whsec_...). Used to verify webhook signatures. */
+  stripeWebhookSecret?: string;
 }
 
 export interface Store {
@@ -140,6 +199,7 @@ export interface Store {
   status: StoreStatus;
   contactEmail?: string;
   theme: StoreThemeConfig;
+  payment: StorePaymentConfig;
   settings: Record<string, unknown>;
   createdAt: ISODate;
   updatedAt: ISODate;
