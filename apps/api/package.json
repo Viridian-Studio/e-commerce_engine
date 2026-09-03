@@ -54,7 +54,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@ecom/types$": "<rootDir>/../../libs/types/src/index.ts"
+      "^@ecom/types$": "<rootDir>/../../../libs/types/src/index.ts"
     }
   }
 }

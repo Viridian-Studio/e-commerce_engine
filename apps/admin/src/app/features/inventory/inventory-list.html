@@ -1,0 +1,60 @@
+<div class="mb-6">
+  <h1 class="text-lg font-semibold text-(--color-text)">Inventory</h1>
+  <p class="text-sm text-(--color-text-muted)">Stock levels across all variants</p>
+</div>
+
+@if (summary(); as s) {
+  <div class="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div class="card p-4">
+      <p class="text-xs text-(--color-text-muted)">Total SKUs</p>
+      <p class="mt-1 text-xl font-semibold text-(--color-text)">{{ s.totalSkus }}</p>
+    </div>
+    <div class="card p-4">
+      <p class="text-xs text-(--color-text-muted)">Total stock</p>
+      <p class="mt-1 text-xl font-semibold text-(--color-text)">{{ s.totalStock }}</p>
+    </div>
+    <div class="card p-4">
+      <p class="text-xs text-(--color-text-muted)">Low stock</p>
+      <p class="mt-1 text-xl font-semibold text-(--color-warning)">{{ s.lowStock }}</p>
+    </div>
+    <div class="card p-4">
+      <p class="text-xs text-(--color-text-muted)">Out of stock</p>
+      <p class="mt-1 text-xl font-semibold text-(--color-danger)">{{ s.outOfStock }}</p>
+    </div>
+  </div>
+}
+
+<div class="card">
+  <div class="border-b border-(--color-border) p-4">
+    <app-search-input placeholder="Search SKU…" (valueChange)="onSearch($event)" class="max-w-xs" />
+  </div>
+  @if (loading()) {
+    <app-loading-state [rows]="6" />
+  } @else if (rows().length === 0) {
+    <app-empty-state title="No variants yet" message="Add product variants to start tracking stock." />
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-(--color-border) text-left text-xs text-(--color-text-muted)">
+            <th class="px-4 py-2.5">SKU</th>
+            <th class="px-2 py-2.5">Variant</th>
+            <th class="px-2 py-2.5">Price</th>
+            <th class="px-2 py-2.5">Stock</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-(--color-border)">
+          @for (v of rows(); track v._id) {
+            <tr class="hover:bg-(--color-surface-2)">
+              <td class="px-4 py-3 font-mono text-xs text-(--color-text-muted)">{{ v.sku }}</td>
+              <td class="px-2 py-3 text-(--color-text)">{{ v.name || (v.attributes | json) }}</td>
+              <td class="px-2 py-3 text-(--color-text-muted)">{{ v.price }} {{ v.currency }}</td>
+              <td class="px-2 py-3 font-medium" [class]="stockClass(v.stock)">{{ v.stock }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [page]="page()" [total]="total()" [totalPages]="totalPages()" (pageChange)="page.set($event)" />
+  }
+</div>

@@ -1,0 +1,41 @@
+<div class="mb-6">
+  <h1 class="text-lg font-semibold text-(--color-text)">Customers</h1>
+  <p class="text-sm text-(--color-text-muted)">{{ total() }} total</p>
+</div>
+
+<div class="card">
+  <div class="border-b border-(--color-border) p-4">
+    <app-search-input placeholder="Search name or email…" (valueChange)="onSearch($event)" class="max-w-xs" />
+  </div>
+  @if (loading()) {
+    <app-loading-state [rows]="6" />
+  } @else if (customers().length === 0) {
+    <app-empty-state title="No customers yet" message="Customers created through checkout or the admin API appear here." />
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-(--color-border) text-left text-xs text-(--color-text-muted)">
+            <th class="px-4 py-2.5">Name</th>
+            <th class="px-2 py-2.5">Email</th>
+            <th class="px-2 py-2.5">Phone</th>
+            <th class="px-2 py-2.5">Status</th>
+            <th class="px-2 py-2.5">Created</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-(--color-border)">
+          @for (c of customers(); track c._id) {
+            <tr class="cursor-pointer hover:bg-(--color-surface-2)" [routerLink]="['/customers', c._id]">
+              <td class="px-4 py-3 font-medium text-(--color-text)">{{ c.firstName }} {{ c.lastName }}</td>
+              <td class="px-2 py-3 text-(--color-text-muted)">{{ c.email }}</td>
+              <td class="px-2 py-3 text-(--color-text-muted)">{{ c.phone ?? '—' }}</td>
+              <td class="px-2 py-3"><app-status-badge [status]="c.status" /></td>
+              <td class="px-2 py-3 text-(--color-text-muted)">{{ c.createdAt | date: 'MMM d, y' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [page]="page()" [total]="total()" [totalPages]="totalPages()" (pageChange)="page.set($event)" />
+  }
+</div>

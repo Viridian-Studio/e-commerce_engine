@@ -1,0 +1,148 @@
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-lg font-semibold text-(--color-text)">Dashboard</h1>
+    <p class="text-sm text-(--color-text-muted)">
+      {{ storeContext.currentStore()?.name ?? 'Select a store to get started' }}
+    </p>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
+    @for (i of [1, 2, 3, 4, 5]; track i) {
+      <div class="card h-24 animate-pulse"></div>
+    }
+  </div>
+} @else if (!stats()) {
+  <div class="card">
+    <app-empty-state
+      title="No store selected"
+      message="Create or select a store from the top bar to see its dashboard."
+    >
+      <a routerLink="/stores" class="btn-primary mt-2">Manage stores</a>
+    </app-empty-state>
+  </div>
+} @else {
+  <!-- Stat cards -->
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
+    @for (card of cards(); track card.label) {
+      <div class="card p-4">
+        <div class="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-brand-soft) text-(--color-brand)">
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+            <path [attr.d]="card.icon" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <p class="text-xs text-(--color-text-muted)">{{ card.label }}</p>
+        <p class="mt-1 text-xl font-semibold text-(--color-text)">{{ card.value }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <!-- Sales chart -->
+    <div class="card p-4 lg:col-span-2">
+      <p class="mb-4 text-sm font-medium text-(--color-text)">Revenue — last 30 days</p>
+      @if (stats()!.salesSeries.length === 0) {
+        <app-empty-state title="No sales yet" message="Paid orders will appear here." />
+      } @else {
+        <div class="flex h-48 items-end gap-1">
+          @for (point of stats()!.salesSeries; track point.date) {
+            <div
+              class="group relative flex-1 rounded-t bg-(--color-brand)/70 transition-colors hover:bg-(--color-brand)"
+              [style.height]="barHeight(point.revenue)"
+            >
+              <div
+                class="pointer-events-none absolute -top-9 left-1/2 hidden -translate-x-1/2 rounded-md bg-(--color-surface-3) px-2 py-1 text-xs whitespace-nowrap text-(--color-text) group-hover:block"
+              >
+                {{ point.date }} — {{ point.revenue | currency: stats()!.currency }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Order status breakdown -->
+    <div class="card p-4">
+      <p class="mb-4 text-sm font-medium text-(--color-text)">Order status</p>
+      @if (stats()!.orderStatusBreakdown.length === 0) {
+        <app-empty-state title="No orders yet" />
+      } @else {
+        <div class="space-y-3">
+          @for (s of stats()!.orderStatusBreakdown; track s.status) {
+            <div>
+              <div class="mb-1 flex items-center justify-between text-xs">
+                <app-status-badge [status]="s.status" />
+                <span class="text-(--color-text-muted)">{{ s.count }}</span>
+              </div>
+              <div class="h-1.5 overflow-hidden rounded-full bg-(--color-surface-2)">
+                <div
+                  class="h-full rounded-full bg-(--color-brand)"
+                  [style.width.%]="(s.count / maxStatusCount()) * 100"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <!-- Recent orders -->
+    <div class="card lg:col-span-2">
+      <div class="flex items-center justify-between border-b border-(--color-border) px-4 py-3">
+        <p class="text-sm font-medium text-(--color-text)">Recent orders</p>
+        <a routerLink="/orders" class="text-xs text-(--color-brand) hover:underline">View all</a>
+      </div>
+      @if (stats()!.recentOrders.length === 0) {
+        <app-empty-state title="No orders yet" />
+      } @else {
+        <div class="divide-y divide-(--color-border)">
+          @for (order of stats()!.recentOrders; track order._id) {
+            <a
+              [routerLink]="['/orders', order._id]"
+              class="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-(--color-surface-2)"
+            >
+              <div class="min-w-0">
+                <p class="truncate font-medium text-(--color-text)">{{ order.number }}</p>
+                <p class="truncate text-xs text-(--color-text-muted)">
+                  {{ order.customer?.name ?? 'Guest' }} · {{ order.createdAt | date: 'MMM d' }}
+                </p>
+              </div>
+              <div class="flex shrink-0 items-center gap-3">
+                <app-status-badge [status]="order.status" />
+                <span class="font-medium text-(--color-text)">{{ order.totals.total | currency: order.totals.currency }}</span>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Top products -->
+    <div class="card">
+      <div class="border-b border-(--color-border) px-4 py-3">
+        <p class="text-sm font-medium text-(--color-text)">Top products</p>
+      </div>
+      @if (stats()!.topProducts.length === 0) {
+        <app-empty-state title="No sales yet" />
+      } @else {
+        <div class="divide-y divide-(--color-border)">
+          @for (p of stats()!.topProducts; track p.productId) {
+            <a
+              [routerLink]="['/products', p.productId]"
+              class="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-(--color-surface-2)"
+            >
+              <div class="min-w-0">
+                <p class="truncate font-medium text-(--color-text)">{{ p.name }}</p>
+                <p class="text-xs text-(--color-text-muted)">{{ p.units }} sold</p>
+              </div>
+              <span class="shrink-0 font-medium text-(--color-text)">{{ p.revenue | currency: stats()!.currency }}</span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

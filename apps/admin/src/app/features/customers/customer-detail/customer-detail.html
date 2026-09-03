@@ -1,0 +1,76 @@
+<a routerLink="/customers" class="mb-1 inline-flex items-center gap-1 text-xs text-(--color-text-muted) hover:text-(--color-text)">
+  <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" /></svg>
+  Customers
+</a>
+
+@if (loading()) {
+  <div class="card mt-2 h-64 animate-pulse"></div>
+} @else if (customer(); as c) {
+  <div class="mb-6 mt-1 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-semibold text-(--color-text)">{{ c.firstName }} {{ c.lastName }}</h1>
+      <p class="text-sm text-(--color-text-muted)">{{ c.email }}</p>
+    </div>
+    <app-status-badge [status]="c.status" />
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="space-y-4 lg:col-span-2">
+      <div class="card">
+        <div class="border-b border-(--color-border) px-4 py-3 text-sm font-medium text-(--color-text)">Orders</div>
+        @if (orders().length === 0) {
+          <app-empty-state title="No orders yet" />
+        } @else {
+          <div class="divide-y divide-(--color-border)">
+            @for (o of orders(); track o._id) {
+              <a [routerLink]="['/orders', o._id]" class="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-(--color-surface-2)">
+                <div>
+                  <p class="font-medium text-(--color-text)">{{ o.number }}</p>
+                  <p class="text-xs text-(--color-text-muted)">{{ o.createdAt | date: 'MMM d, y' }}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <app-status-badge [status]="o.status" />
+                  <span class="font-medium text-(--color-text)">{{ o.totals.total | currency: o.totals.currency }}</span>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="card p-4">
+        <p class="mb-3 text-sm font-medium text-(--color-text)">Activity</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-(--color-text-muted)">Orders</span><span class="text-(--color-text)">{{ orders().length }}</span></div>
+          <div class="flex justify-between"><span class="text-(--color-text-muted)">Total spent</span><span class="text-(--color-text)">{{ totalSpent() | currency: currency() }}</span></div>
+          <div class="flex justify-between"><span class="text-(--color-text-muted)">Customer since</span><span class="text-(--color-text)">{{ c.createdAt | date: 'MMM d, y' }}</span></div>
+        </div>
+      </div>
+
+      @if (c.phone) {
+        <div class="card p-4">
+          <p class="mb-1 text-sm font-medium text-(--color-text)">Phone</p>
+          <p class="text-sm text-(--color-text-muted)">{{ c.phone }}</p>
+        </div>
+      }
+
+      @if (c.addresses.length > 0) {
+        <div class="card p-4">
+          <p class="mb-3 text-sm font-medium text-(--color-text)">Addresses</p>
+          <div class="space-y-3">
+            @for (a of c.addresses; track $index) {
+              <p class="text-sm text-(--color-text-muted)">
+                {{ a.firstName }} {{ a.lastName }}<br />
+                {{ a.line1 }}<br />
+                {{ a.city }} {{ a.postalCode }}<br />
+                {{ a.country }}
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

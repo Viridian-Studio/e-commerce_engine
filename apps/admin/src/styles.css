@@ -1,0 +1,121 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+
+  --color-bg: #0a0a0c;
+  --color-surface: #131317;
+  --color-surface-2: #1a1a20;
+  --color-surface-3: #212129;
+  --color-border: #26262f;
+  --color-border-strong: #33333f;
+
+  --color-text: #f4f4f6;
+  --color-text-muted: #a1a1ac;
+  --color-text-faint: #6c6c78;
+
+  --color-brand: #6366f1;
+  --color-brand-hover: #7678f4;
+  --color-brand-soft: #6366f11a;
+
+  --color-success: #22c55e;
+  --color-success-soft: #22c55e1a;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #f59e0b1a;
+  --color-danger: #ef4444;
+  --color-danger-soft: #ef44441a;
+  --color-info: #38bdf8;
+  --color-info-soft: #38bdf81a;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-border-strong) 70%, white 10%);
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+/* Utility layer: small set of hand-rolled component classes reused across
+   feature pages, kept here instead of duplicated Tailwind strings on every
+   template. */
+@layer components {
+  .card {
+    @apply rounded-xl border border-(--color-border) bg-(--color-surface);
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-sm text-(--color-text)
+      placeholder:text-(--color-text-faint) outline-none transition-colors
+      focus:border-(--color-brand) focus:ring-2 focus:ring-(--color-brand-soft);
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-medium text-(--color-text-muted);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      bg-(--color-brand) text-white hover:bg-(--color-brand-hover);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      border border-(--color-border) bg-(--color-surface-2) text-(--color-text) hover:bg-(--color-surface-3);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      bg-(--color-danger) text-white hover:opacity-90;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      text-(--color-text-muted) hover:bg-(--color-surface-2) hover:text-(--color-text);
+  }
+
+  .icon-btn {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-(--color-text-muted)
+      transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text);
+  }
+}

@@ -70,6 +70,7 @@ export class OrdersService {
       ];
     }
     if (query.status) filter.status = query.status;
+    if (query.customerId) filter.customerId = new Types.ObjectId(query.customerId);
     const sort: Record<string, 1 | -1> = { [sortField ?? 'createdAt']: sortOrder };
     const [items, total] = await Promise.all([
       this.model.find(filter).sort(sort).skip((page - 1) * limit).limit(limit).exec(),

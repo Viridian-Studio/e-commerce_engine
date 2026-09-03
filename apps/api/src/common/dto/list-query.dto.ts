@@ -53,6 +53,11 @@ export class ListQueryDto implements ListQuery {
   @IsOptional()
   @IsString()
   collectionId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  customerId?: string;
 }
 
 export function buildPaginationMeta(page: number, limit: number, total: number): PaginationMeta {

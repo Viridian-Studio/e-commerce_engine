@@ -1,0 +1,145 @@
+<a routerLink="/orders" class="mb-1 inline-flex items-center gap-1 text-xs text-(--color-text-muted) hover:text-(--color-text)">
+  <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" /></svg>
+  Orders
+</a>
+
+@if (loading()) {
+  <div class="card mt-2 h-64 animate-pulse"></div>
+} @else if (order(); as o) {
+  <div class="mb-6 mt-1 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-semibold text-(--color-text)">{{ o.number }}</h1>
+      <p class="text-sm text-(--color-text-muted)">{{ o.createdAt | date: 'medium' }}</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <app-status-badge [status]="o.paymentStatus" />
+      <app-status-badge [status]="o.fulfillmentStatus" />
+      <app-status-badge [status]="o.status" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="space-y-4 lg:col-span-2">
+      <!-- Items -->
+      <div class="card">
+        <div class="border-b border-(--color-border) px-4 py-3 text-sm font-medium text-(--color-text)">Items</div>
+        <div class="divide-y divide-(--color-border)">
+          @for (item of o.items; track $index) {
+            <div class="flex items-center gap-3 px-4 py-3 text-sm">
+              @if (item.image) {
+                <img [src]="item.image" alt="" class="h-10 w-10 rounded-lg object-cover" />
+              } @else {
+                <div class="h-10 w-10 rounded-lg bg-(--color-surface-3)"></div>
+              }
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-medium text-(--color-text)">{{ item.name }}</p>
+                <p class="text-xs text-(--color-text-faint)">{{ item.sku }} · Qty {{ item.quantity }}</p>
+              </div>
+              <span class="font-medium text-(--color-text)">{{ item.total | currency: o.totals.currency }}</span>
+            </div>
+          }
+        </div>
+        <div class="space-y-1.5 border-t border-(--color-border) px-4 py-3 text-sm">
+          <div class="flex justify-between text-(--color-text-muted)">
+            <span>Subtotal</span><span>{{ o.totals.subtotal | currency: o.totals.currency }}</span>
+          </div>
+          @if (o.totals.discount > 0) {
+            <div class="flex justify-between text-(--color-success)">
+              <span>Discount</span><span>-{{ o.totals.discount | currency: o.totals.currency }}</span>
+            </div>
+          }
+          <div class="flex justify-between text-(--color-text-muted)">
+            <span>Shipping</span><span>{{ o.totals.shipping | currency: o.totals.currency }}</span>
+          </div>
+          <div class="flex justify-between text-(--color-text-muted)">
+            <span>Tax</span><span>{{ o.totals.tax | currency: o.totals.currency }}</span>
+          </div>
+          <div class="flex justify-between border-t border-(--color-border) pt-1.5 font-semibold text-(--color-text)">
+            <span>Total</span><span>{{ o.totals.total | currency: o.totals.currency }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="card">
+        <div class="border-b border-(--color-border) px-4 py-3 text-sm font-medium text-(--color-text)">Timeline</div>
+        <div class="space-y-4 p-4">
+          @for (event of o.timeline; track $index) {
+            <div class="flex gap-3 text-sm">
+              <div class="mt-1 h-2 w-2 shrink-0 rounded-full bg-(--color-brand)"></div>
+              <div>
+                <p class="text-(--color-text)"><app-status-badge [status]="event.status" /></p>
+                @if (event.note) {
+                  <p class="mt-0.5 text-(--color-text-muted)">{{ event.note }}</p>
+                }
+                <p class="mt-0.5 text-xs text-(--color-text-faint)">{{ event.createdAt | date: 'medium' }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Customer -->
+      <div class="card p-4">
+        <p class="mb-2 text-sm font-medium text-(--color-text)">Customer</p>
+        <p class="text-sm text-(--color-text)">{{ o.customer?.name ?? 'Guest checkout' }}</p>
+        <p class="text-sm text-(--color-text-muted)">{{ o.customer?.email }}</p>
+        @if (o.customer?.phone) {
+          <p class="text-sm text-(--color-text-muted)">{{ o.customer?.phone }}</p>
+        }
+        @if (o.customerId) {
+          <a [routerLink]="['/customers', o.customerId]" class="mt-2 inline-block text-xs text-(--color-brand) hover:underline">
+            View customer
+          </a>
+        }
+      </div>
+
+      <!-- Addresses -->
+      @if (o.shippingAddress) {
+        <div class="card p-4">
+          <p class="mb-2 text-sm font-medium text-(--color-text)">Shipping address</p>
+          <p class="text-sm text-(--color-text-muted)">
+            {{ o.shippingAddress.firstName }} {{ o.shippingAddress.lastName }}<br />
+            {{ o.shippingAddress.line1 }}<br />
+            @if (o.shippingAddress.line2) { {{ o.shippingAddress.line2 }}<br /> }
+            {{ o.shippingAddress.city }} {{ o.shippingAddress.postalCode }}<br />
+            {{ o.shippingAddress.country }}
+          </p>
+        </div>
+      }
+
+      <!-- Payment -->
+      <div class="card p-4">
+        <p class="mb-2 text-sm font-medium text-(--color-text)">Payment</p>
+        <p class="text-sm text-(--color-text-muted)">Provider: {{ o.payment?.provider ?? '—' }}</p>
+        @if (o.payment?.transactionId) {
+          <p class="truncate text-xs text-(--color-text-faint)">Txn: {{ o.payment?.transactionId }}</p>
+        }
+        <div class="mt-3 flex gap-2">
+          <button type="button" class="btn-secondary flex-1" [disabled]="capturing()" (click)="capture()">Capture</button>
+          <button type="button" class="btn-secondary flex-1" [disabled]="capturing()" (click)="refund()">Refund</button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <app-select [options]="paymentStatusOptions" [value]="nextPaymentStatus" (valueChange)="nextPaymentStatus = $event" />
+          <button type="button" class="btn-secondary w-full" [disabled]="updatingPayment()" (click)="updatePaymentStatus()">
+            Update payment status
+          </button>
+        </div>
+      </div>
+
+      <!-- Order status -->
+      <div class="card p-4">
+        <p class="mb-2 text-sm font-medium text-(--color-text)">Order status</p>
+        <div class="space-y-2">
+          <app-select [options]="statusOptions" [value]="nextStatus" (valueChange)="nextStatus = $event" />
+          <input type="text" class="input" placeholder="Note (optional)" [(ngModel)]="statusNote" name="statusNote" />
+          <button type="button" class="btn-primary w-full" [disabled]="updatingStatus()" (click)="updateStatus()">
+            {{ updatingStatus() ? 'Updating…' : 'Update status' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
