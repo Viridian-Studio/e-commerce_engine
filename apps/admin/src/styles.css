@@ -77,12 +77,12 @@ button {
    template. */
 @layer components {
   .card {
-    @apply rounded-xl border border-(--color-border) bg-(--color-surface);
+    @apply rounded-xl border border-(--color-border) bg-(--color-surface) transition-shadow;
   }
 
   .input {
     @apply w-full rounded-lg border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-sm text-(--color-text)
-      placeholder:text-(--color-text-faint) outline-none transition-colors
+      placeholder:text-(--color-text-faint) outline-none transition-all
       focus:border-(--color-brand) focus:ring-2 focus:ring-(--color-brand-soft);
   }
 
@@ -92,30 +92,91 @@ button {
 
   .btn-primary {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
-      transition-colors disabled:cursor-not-allowed disabled:opacity-50
-      bg-(--color-brand) text-white hover:bg-(--color-brand-hover);
+      transition-all disabled:cursor-not-allowed disabled:opacity-50
+      bg-(--color-brand) text-white hover:bg-(--color-brand-hover) active:scale-[0.97];
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
-      transition-colors disabled:cursor-not-allowed disabled:opacity-50
-      border border-(--color-border) bg-(--color-surface-2) text-(--color-text) hover:bg-(--color-surface-3);
+      transition-all disabled:cursor-not-allowed disabled:opacity-50
+      border border-(--color-border) bg-(--color-surface-2) text-(--color-text) hover:bg-(--color-surface-3) active:scale-[0.97];
   }
 
   .btn-danger {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
-      transition-colors disabled:cursor-not-allowed disabled:opacity-50
-      bg-(--color-danger) text-white hover:opacity-90;
+      transition-all disabled:cursor-not-allowed disabled:opacity-50
+      bg-(--color-danger) text-white hover:opacity-90 active:scale-[0.97];
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium
-      transition-colors disabled:cursor-not-allowed disabled:opacity-50
-      text-(--color-text-muted) hover:bg-(--color-surface-2) hover:text-(--color-text);
+      transition-all disabled:cursor-not-allowed disabled:opacity-50
+      text-(--color-text-muted) hover:bg-(--color-surface-2) hover:text-(--color-text) active:scale-[0.97];
   }
 
   .icon-btn {
     @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-(--color-text-muted)
-      transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text);
+      transition-all hover:bg-(--color-surface-2) hover:text-(--color-text) active:scale-90;
+  }
+}
+
+/* ---- Animations ---- */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(16px); }
+}
+
+.animate-fade-in { animation: fade-in 0.2s ease-out both; }
+.animate-fade-in-up { animation: fade-in-up 0.25s ease-out both; }
+.animate-fade-in-down { animation: fade-in-down 0.25s ease-out both; }
+.animate-scale-in { animation: scale-in 0.18s ease-out both; }
+.animate-slide-in-right { animation: slide-in-right 0.25s ease-out both; }
+.animate-slide-out-right { animation: slide-out-right 0.2s ease-in both; }
+
+/* Stagger helper: children fade in with a small delay between each */
+.stagger > * {
+  animation: fade-in-up 0.3s ease-out both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 30ms; }
+.stagger > *:nth-child(3) { animation-delay: 60ms; }
+.stagger > *:nth-child(4) { animation-delay: 90ms; }
+.stagger > *:nth-child(5) { animation-delay: 120ms; }
+.stagger > *:nth-child(6) { animation-delay: 150ms; }
+.stagger > *:nth-child(7) { animation-delay: 180ms; }
+.stagger > *:nth-child(8) { animation-delay: 210ms; }
+.stagger > *:nth-child(9) { animation-delay: 240ms; }
+.stagger > *:nth-child(10) { animation-delay: 270ms; }
+.stagger > *:nth-child(n+11) { animation-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-fade-in-down,
+  .animate-scale-in,
+  .animate-slide-in-right,
+  .animate-slide-out-right,
+  .stagger > * {
+    animation: none !important;
   }
 }

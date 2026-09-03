@@ -17,7 +17,7 @@
       <a routerLink="/categories/new" class="btn-primary mt-2">New category</a>
     </app-empty-state>
   } @else {
-    <div class="divide-y divide-(--color-border)">
+    <div class="stagger divide-y divide-(--color-border)">
       @for (c of rows(); track c._id) {
         <div class="flex items-center justify-between gap-3 px-4 py-3 hover:bg-(--color-surface-2)">
           <div class="flex items-center gap-2 text-sm" [style.padding-left.px]="c.depth * 20">

@@ -24,9 +24,9 @@
   </div>
 } @else {
   <!-- Stat cards -->
-  <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
+  <div class="stagger grid grid-cols-2 gap-4 lg:grid-cols-5">
     @for (card of cards(); track card.label) {
-      <div class="card p-4">
+      <div class="card p-4 hover:shadow-lg hover:shadow-black/20">
         <div class="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-brand-soft) text-(--color-brand)">
           <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
             <path [attr.d]="card.icon" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />

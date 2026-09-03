@@ -16,7 +16,9 @@ const COLLAPSE_KEY = 'ecom_admin_sidebar_collapsed';
         <app-topbar />
         <main class="flex-1 overflow-y-auto">
           <div class="mx-auto max-w-7xl px-6 py-6">
-            <router-outlet />
+            <div class="animate-fade-in-up">
+              <router-outlet />
+            </div>
           </div>
         </main>
       </div>

@@ -38,7 +38,7 @@ const NAV_ITEMS: NavItem[] = [
           E
         </div>
         @if (!collapsed()) {
-          <span class="truncate text-sm font-semibold text-(--color-text)">Engine Admin</span>
+          <span class="truncate text-sm font-semibold text-(--color-text)">Viridian Commerce</span>
         }
       </div>
 
@@ -48,7 +48,7 @@ const NAV_ITEMS: NavItem[] = [
             [routerLink]="item.path"
             routerLinkActive="bg-(--color-surface-3) text-(--color-text)"
             [routerLinkActiveOptions]="{ exact: false }"
-            class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-(--color-text-muted) transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text)"
+            class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-(--color-text-muted) transition-all hover:bg-(--color-surface-2) hover:text-(--color-text) active:scale-[0.98]"
             [title]="item.label"
           >
             <svg viewBox="0 0 24 24" fill="none" class="h-[18px] w-[18px] shrink-0">

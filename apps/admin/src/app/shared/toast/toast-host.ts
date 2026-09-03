@@ -19,7 +19,7 @@ const CLASS_BY_KIND: Record<string, string> = {
     <div class="pointer-events-none fixed top-4 right-4 z-[70] flex w-80 flex-col gap-2">
       @for (n of notifications.notifications(); track n.id) {
         <div
-          class="card pointer-events-auto flex items-start gap-2.5 border-l-2 p-3 shadow-lg"
+          class="card pointer-events-auto flex items-start gap-2.5 border-l-2 p-3 shadow-lg animate-slide-in-right"
           [class]="classFor(n.kind)"
         >
           <svg viewBox="0 0 24 24" fill="none" class="mt-0.5 h-4 w-4 shrink-0">
@@ -34,7 +34,7 @@ const CLASS_BY_KIND: Record<string, string> = {
           <p class="flex-1 text-sm text-(--color-text)">{{ n.message }}</p>
           <button
             type="button"
-            class="text-(--color-text-faint) hover:text-(--color-text)"
+            class="text-(--color-text-faint) transition-colors hover:text-(--color-text)"
             (click)="notifications.dismiss(n.id)"
             aria-label="Dismiss"
           >

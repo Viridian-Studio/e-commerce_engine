@@ -5,9 +5,9 @@ import { ConfirmService } from './confirm.service';
   selector: 'app-confirm-dialog-host',
   template: `
     @if (confirm.state(); as state) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
         <div class="absolute inset-0 bg-black/60" (click)="confirm.resolve(false)"></div>
-        <div class="card relative w-full max-w-sm p-5 shadow-2xl">
+        <div class="card animate-scale-in relative w-full max-w-sm p-5 shadow-2xl">
           <h2 class="text-sm font-semibold text-(--color-text)">{{ state.title }}</h2>
           @if (state.message) {
             <p class="mt-2 text-sm text-(--color-text-muted)">{{ state.message }}</p>

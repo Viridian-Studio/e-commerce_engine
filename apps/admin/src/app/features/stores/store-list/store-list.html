@@ -17,7 +17,7 @@
       <a routerLink="/stores/new" class="btn-primary mt-2">New store</a>
     </app-empty-state>
   } @else {
-    <div class="divide-y divide-(--color-border)">
+    <div class="stagger divide-y divide-(--color-border)">
       @for (s of stores(); track s._id) {
         <div class="flex items-center justify-between gap-3 px-4 py-3 hover:bg-(--color-surface-2)">
           <div class="flex items-center gap-3">

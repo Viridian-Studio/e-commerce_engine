@@ -14,7 +14,7 @@ import { extractErrorMessage } from '../../core/http-error';
           <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-brand) text-sm font-bold text-white">
             E
           </div>
-          <h1 class="text-lg font-semibold text-(--color-text)">Engine Admin</h1>
+          <h1 class="text-lg font-semibold text-(--color-text)">Viridian Commerce</h1>
           <p class="text-sm text-(--color-text-muted)">Sign in to manage your commerce engine</p>
         </div>
 
