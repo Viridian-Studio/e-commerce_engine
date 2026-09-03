@@ -5,13 +5,11 @@
         <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     </div>
-    <p class="eyebrow mt-6">Rendelés visszaigazolva</p>
-    <h1 class="heading-lg mt-2">Köszönjük@if (order()) {, {{ order()!.customer?.name || order()!.customer?.email }}}!</h1>
+    <p class="eyebrow mt-6">{{ 'confirmation.confirmed' | t }}</p>
+    <h1 class="heading-lg mt-2">{{ 'confirmation.thankYou' | t }}@if (order()) {, {{ order()!.customer?.name || order()!.customer?.email }}}!</h1>
 
     @if (order(); as o) {
-      <p class="mt-3 text-sm text-(--color-store-text-muted)">
-        A(z) <span class="font-semibold text-(--color-store-text)">#{{ o.number }}</span> számú rendelésed rögzítettük. Visszaigazolást küldtünk erre a címre: {{ o.customer?.email }}.
-      </p>
+      <p class="mt-3 text-sm text-(--color-store-text-muted)">{{ placedMessage() }}</p>
 
       <div class="mt-10 w-full border border-(--color-store-border) p-5 text-left">
         <div class="divide-y divide-(--color-store-border)">
@@ -25,7 +23,7 @@
                 </div>
                 <div>
                   <p class="text-sm font-medium">{{ item.name }}</p>
-                  <p class="text-xs text-(--color-store-text-faint)">Mennyiség: {{ item.quantity }}</p>
+                  <p class="text-xs text-(--color-store-text-faint)">{{ item.quantity }}x</p>
                 </div>
               </div>
               <app-product-price [price]="item.total" [currency]="o.totals.currency" />
@@ -34,20 +32,18 @@
         </div>
 
         <div class="mt-4 flex flex-col gap-1.5 border-t border-(--color-store-border) pt-4 text-sm">
-          <div class="flex justify-between text-(--color-store-text-muted)"><span>Részösszeg</span><app-product-price [price]="o.totals.subtotal" [currency]="o.totals.currency" /></div>
+          <div class="flex justify-between text-(--color-store-text-muted)"><span>{{ 'cart.subtotal' | t }}</span><app-product-price [price]="o.totals.subtotal" [currency]="o.totals.currency" /></div>
           @if (o.totals.discount > 0) {
-            <div class="flex justify-between text-(--color-store-text-muted)"><span>Kedvezmény</span><span>-{{ o.totals.discount }}</span></div>
+            <div class="flex justify-between text-(--color-store-text-muted)"><span>{{ 'checkout.discount' | t }}</span><span>-{{ o.totals.discount }}</span></div>
           }
-          <div class="flex justify-between text-(--color-store-text-muted)"><span>Szállítás</span><app-product-price [price]="o.totals.shipping" [currency]="o.totals.currency" /></div>
-          <div class="flex justify-between border-t border-(--color-store-border) pt-2 text-base font-bold"><span>Összesen</span><app-product-price [price]="o.totals.total" [currency]="o.totals.currency" size="lg" /></div>
+          <div class="flex justify-between text-(--color-store-text-muted)"><span>{{ 'checkout.shipping' | t }}</span><app-product-price [price]="o.totals.shipping" [currency]="o.totals.currency" /></div>
+          <div class="flex justify-between border-t border-(--color-store-border) pt-2 text-base font-bold"><span>{{ 'checkout.total' | t }}</span><app-product-price [price]="o.totals.total" [currency]="o.totals.currency" size="lg" /></div>
         </div>
       </div>
     } @else {
-      <p class="mt-3 max-w-md text-sm text-(--color-store-text-muted)">
-        A rendelésedet sikeresen rögzítettük. A teljes visszaigazolást és a rendelés részleteit emailben küldtük el.
-      </p>
+      <p class="mt-3 max-w-md text-sm text-(--color-store-text-muted)">{{ fallbackMessage() }}</p>
     }
 
-    <a routerLink="/" class="btn-primary mt-8">Vásárlás folytatása</a>
+    <a routerLink="/" class="btn-primary mt-8">{{ 'confirmation.continueShopping' | t }}</a>
   </div>
 </section>

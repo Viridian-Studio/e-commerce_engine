@@ -1,4 +1,5 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { CurrencyService } from '../../../core/currency.service';
 
 @Component({
   selector: 'app-product-price',
@@ -16,17 +17,16 @@ import { Component, computed, input } from '@angular/core';
   `,
 })
 export class ProductPrice {
+  private readonly currencyService = inject(CurrencyService);
+
   readonly price = input.required<number>();
   readonly compareAt = input<number | null | undefined>();
+  /** Currency the `price`/`compareAt` values are already denominated in (the store's own currency). */
   readonly currency = input('EUR');
   readonly size = input<'sm' | 'lg'>('sm');
   readonly onLight = input(false);
 
-  protected readonly formatter = computed(
-    () => new Intl.NumberFormat('hu-HU', { style: 'currency', currency: this.currency() }),
-  );
-
   protected formatted(value: number): string {
-    return this.formatter().format(value);
+    return this.currencyService.format(value, this.currency());
   }
 }

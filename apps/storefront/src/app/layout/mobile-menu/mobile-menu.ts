@@ -1,10 +1,11 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { CategoryNode } from '../../core/api/category.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-mobile-menu',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <div
       class="fixed inset-0 z-50 lg:hidden"
@@ -21,11 +22,11 @@ import type { CategoryNode } from '../../core/api/category.service';
         [class]="open() ? 'translate-x-0' : '-translate-x-full'"
       >
         <div class="mb-6 flex items-center justify-between">
-          <span class="text-xs font-semibold tracking-wide uppercase text-(--color-store-text-muted)">Menü</span>
-          <button type="button" class="icon-btn" (click)="closed.emit()" aria-label="Menü bezárása">&times;</button>
+          <span class="text-xs font-semibold tracking-wide uppercase text-(--color-store-text-muted)">{{ 'nav.menu' | t }}</span>
+          <button type="button" class="icon-btn" (click)="closed.emit()" [attr.aria-label]="'nav.menu' | t">&times;</button>
         </div>
 
-        <a routerLink="/" (click)="closed.emit()" class="py-2.5 text-sm font-semibold uppercase">Kezdőlap</a>
+        <a routerLink="/" (click)="closed.emit()" class="py-2.5 text-sm font-semibold uppercase">{{ 'nav.home' | t }}</a>
 
         @for (top of categoryTree(); track top._id) {
           <div class="border-t border-(--color-store-border) py-2.5">
@@ -44,13 +45,13 @@ import type { CategoryNode } from '../../core/api/category.service';
           </div>
         }
 
-        <a routerLink="/brands" (click)="closed.emit()" class="border-t border-(--color-store-border) py-2.5 text-sm font-semibold uppercase">Márkák</a>
-        <a [routerLink]="['/collection', 'sale']" (click)="closed.emit()" class="border-t border-(--color-store-border) py-2.5 text-sm font-semibold text-(--color-store-primary) uppercase">Akció</a>
-        <a [routerLink]="['/collection', 'new-arrivals']" (click)="closed.emit()" class="border-t border-b border-(--color-store-border) py-2.5 text-sm font-semibold uppercase">Újdonságok</a>
+        <a routerLink="/brands" (click)="closed.emit()" class="border-t border-(--color-store-border) py-2.5 text-sm font-semibold uppercase">{{ 'nav.brands' | t }}</a>
+        <a [routerLink]="['/collection', 'sale']" (click)="closed.emit()" class="border-t border-(--color-store-border) py-2.5 text-sm font-semibold text-(--color-store-primary) uppercase">{{ 'nav.sale' | t }}</a>
+        <a [routerLink]="['/collection', 'new-arrivals']" (click)="closed.emit()" class="border-t border-b border-(--color-store-border) py-2.5 text-sm font-semibold uppercase">{{ 'nav.newArrivals' | t }}</a>
 
         <div class="mt-6 flex flex-col gap-2">
-          <a routerLink="/login" (click)="closed.emit()" class="text-sm text-(--color-store-text-muted)">Fiók</a>
-          <a routerLink="/wishlist" (click)="closed.emit()" class="text-sm text-(--color-store-text-muted)">Kedvencek</a>
+          <a routerLink="/login" (click)="closed.emit()" class="text-sm text-(--color-store-text-muted)">{{ 'nav.account' | t }}</a>
+          <a routerLink="/wishlist" (click)="closed.emit()" class="text-sm text-(--color-store-text-muted)">{{ 'nav.wishlist' | t }}</a>
         </div>
       </nav>
     </div>

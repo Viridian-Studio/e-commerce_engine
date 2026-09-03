@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CAMPAIGN_BANNER } from '../../../../core/config/home-content.config';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 const ICON_PATHS: Record<string, string> = {
   shield: 'M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z',
@@ -11,10 +12,10 @@ const ICON_PATHS: Record<string, string> = {
   selector: 'app-campaign-banner',
   template: `
     <section class="section-dark relative overflow-hidden">
-      <img [src]="content.image" alt="" class="absolute inset-0 h-full w-full object-cover" />
+      <img [src]="content().image" alt="" class="photo-tone absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-black/75"></div>
       <div class="container-store relative grid grid-cols-1 gap-8 py-14 sm:grid-cols-3">
-        @for (item of content.items; track item.title) {
+        @for (item of content().items; track item.title) {
           <div class="flex flex-col items-center gap-2 text-center">
             <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7 text-(--color-store-primary)">
               <path [attr.d]="iconPaths[item.icon]" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
@@ -28,6 +29,7 @@ const ICON_PATHS: Record<string, string> = {
   `,
 })
 export class CampaignBanner {
-  protected readonly content = CAMPAIGN_BANNER;
+  private readonly i18n = inject(I18nService);
+  protected readonly content = computed(() => CAMPAIGN_BANNER[this.i18n.lang()]);
   protected readonly iconPaths = ICON_PATHS;
 }

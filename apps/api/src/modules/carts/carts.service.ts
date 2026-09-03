@@ -11,12 +11,17 @@ import type { Cart as CartType } from '@ecom/types';
 export class CartsService {
   constructor(@InjectModel(Cart.name) private readonly model: Model<CartDocument>) {}
 
-  async getOrCreate(storeId: string, token?: string, customerId?: string): Promise<CartType> {
-    const doc = await this.getOrCreateDocument(storeId, token, customerId);
+  async getOrCreate(storeId: string, token?: string, customerId?: string, currency?: string): Promise<CartType> {
+    const doc = await this.getOrCreateDocument(storeId, token, customerId, currency);
     return doc.toJSON<CartType>();
   }
 
-  private async getOrCreateDocument(storeId: string, token?: string, customerId?: string): Promise<CartDocument> {
+  private async getOrCreateDocument(
+    storeId: string,
+    token?: string,
+    customerId?: string,
+    currency?: string,
+  ): Promise<CartDocument> {
     if (token) {
       const existing = await this.model.findOne({ storeId, token }).exec();
       if (existing) return existing;
@@ -30,6 +35,7 @@ export class CartsService {
       token: randomBytes(16).toString('hex'),
       customerId: customerId ? new Types.ObjectId(customerId) : null,
       items: [],
+      ...(currency ? { currency } : {}),
     });
   }
 

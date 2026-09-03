@@ -1,8 +1,8 @@
 <section class="section-dark py-10">
   <div class="container-store animate-fade-up">
-    <h1 class="heading-lg mb-6">Pénztár</h1>
+    <h1 class="heading-lg mb-6">{{ 'checkout.title' | t }}</h1>
 
-    <nav class="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold tracking-wide uppercase" aria-label="Fizetési lépések">
+    <nav class="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold tracking-wide uppercase" [attr.aria-label]="'checkout.title' | t">
       @for (s of steps; track s.key; let i = $index) {
         <button
           type="button"
@@ -10,7 +10,7 @@
           [class]="s.key === step() ? 'text-(--color-store-primary)' : 'text-(--color-store-text-muted) hover:text-(--color-store-text)'"
           (click)="goTo(s.key)"
         >
-          {{ i + 1 }}. {{ s.label }}
+          {{ i + 1 }}. {{ s.labelKey | t }}
         </button>
         @if (i < steps.length - 1) {
           <span class="text-(--color-store-text-faint)" aria-hidden="true">&rarr;</span>
@@ -34,73 +34,73 @@
                       </div>
                       <div>
                         <p class="text-sm font-medium">{{ item.name }}</p>
-                        <p class="text-xs text-(--color-store-text-faint)">Mennyiség: {{ item.quantity }}</p>
+                        <p class="text-xs text-(--color-store-text-faint)">{{ item.quantity }}x</p>
                       </div>
                     </div>
                     <app-product-price [price]="item.price * item.quantity" [currency]="cart.currency()" />
                   </div>
                 }
               </div>
-              <button type="button" class="btn-primary mt-6" (click)="continueFromCart()">Tovább az adatokhoz</button>
+              <button type="button" class="btn-primary mt-6" (click)="continueFromCart()">{{ 'checkout.continueToInformation' | t }}</button>
             } @else {
-              <p class="text-sm text-(--color-store-text-muted)">A kosarad üres.</p>
-              <a routerLink="/" class="btn-outline mt-4 inline-flex">Vásárlás folytatása</a>
+              <p class="text-sm text-(--color-store-text-muted)">{{ 'cart.empty' | t }}</p>
+              <a routerLink="/" class="btn-outline mt-4 inline-flex">{{ 'cart.continueShopping' | t }}</a>
             }
           }
 
           @case ('information') {
             <form [formGroup]="form" (ngSubmit)="continueFromInformation()" class="flex flex-col gap-5" novalidate>
               <div>
-                <label class="field-label" for="email">Email cím</label>
+                <label class="field-label" for="email">{{ 'checkout.email' | t }}</label>
                 <input id="email" type="email" formControlName="email" class="field-input" autocomplete="email" />
                 @if (form.controls.email.invalid && form.controls.email.touched) {
-                  <p class="mt-1 text-xs text-(--color-store-primary)">Adj meg egy érvényes email címet.</p>
+                  <p class="mt-1 text-xs text-(--color-store-primary)">{{ 'footer.emailPlaceholder' | t }}</p>
                 }
               </div>
 
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="field-label" for="firstName">Keresztnév</label>
+                  <label class="field-label" for="firstName">{{ 'checkout.firstName' | t }}</label>
                   <input id="firstName" type="text" formControlName="firstName" class="field-input" autocomplete="given-name" />
                 </div>
                 <div>
-                  <label class="field-label" for="lastName">Vezetéknév</label>
+                  <label class="field-label" for="lastName">{{ 'checkout.lastName' | t }}</label>
                   <input id="lastName" type="text" formControlName="lastName" class="field-input" autocomplete="family-name" />
                 </div>
               </div>
 
               <div>
-                <label class="field-label" for="phone">Telefonszám (opcionális)</label>
+                <label class="field-label" for="phone">{{ 'checkout.phone' | t }}</label>
                 <input id="phone" type="tel" formControlName="phone" class="field-input" autocomplete="tel" />
               </div>
 
               <div formGroupName="address" class="flex flex-col gap-4 border-t border-(--color-store-border) pt-5">
-                <p class="field-label mb-0">Szállítási cím</p>
+                <p class="field-label mb-0">{{ 'checkout.shippingAddress' | t }}</p>
                 <div>
-                  <label class="field-label" for="line1">Cím</label>
+                  <label class="field-label" for="line1">{{ 'checkout.address' | t }}</label>
                   <input id="line1" type="text" formControlName="line1" class="field-input" autocomplete="address-line1" />
                 </div>
                 <div>
-                  <label class="field-label" for="line2">Emelet, ajtó, stb. (opcionális)</label>
+                  <label class="field-label" for="line2">{{ 'checkout.addressLine2' | t }}</label>
                   <input id="line2" type="text" formControlName="line2" class="field-input" autocomplete="address-line2" />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="field-label" for="city">Város</label>
+                    <label class="field-label" for="city">{{ 'checkout.city' | t }}</label>
                     <input id="city" type="text" formControlName="city" class="field-input" autocomplete="address-level2" />
                   </div>
                   <div>
-                    <label class="field-label" for="state">Megye / régió</label>
+                    <label class="field-label" for="state">{{ 'checkout.state' | t }}</label>
                     <input id="state" type="text" formControlName="state" class="field-input" autocomplete="address-level1" />
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="field-label" for="postalCode">Irányítószám</label>
+                    <label class="field-label" for="postalCode">{{ 'checkout.postalCode' | t }}</label>
                     <input id="postalCode" type="text" formControlName="postalCode" class="field-input" autocomplete="postal-code" />
                   </div>
                   <div>
-                    <label class="field-label" for="country">Ország</label>
+                    <label class="field-label" for="country">{{ 'checkout.country' | t }}</label>
                     <select id="country" formControlName="country" class="field-input" autocomplete="country">
                       @for (c of countries; track c.code) {
                         <option [value]="c.code">{{ c.name }}</option>
@@ -110,14 +110,14 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn-primary mt-2">Tovább a szállításhoz</button>
+              <button type="submit" class="btn-primary mt-2">{{ 'checkout.continueToShipping' | t }}</button>
             </form>
           }
 
           @case ('shipping') {
             <div class="flex flex-col gap-4">
               @if (shippingLoading()) {
-                <p class="text-sm text-(--color-store-text-muted)">Szállítási díj kiszámítása…</p>
+                <p class="text-sm text-(--color-store-text-muted)">{{ 'checkout.calculatingShipping' | t }}</p>
               } @else if (shippingRate()) {
                 <label class="flex cursor-pointer items-center justify-between border border-(--color-store-primary) bg-(--color-store-primary)/10 p-4">
                   <span class="flex items-center gap-3 text-sm">
@@ -126,10 +126,9 @@
                   </span>
                   <app-product-price [price]="shippingRate()!.price" [currency]="cart.currency()" />
                 </label>
-                <p class="text-xs text-(--color-store-text-muted)">A díjat az áruház számítja ki a megadott cím alapján.</p>
               }
               <button type="button" class="btn-primary mt-2" [disabled]="shippingLoading()" (click)="continueFromShipping()">
-                Tovább a fizetéshez
+                {{ 'checkout.continueToPayment' | t }}
               </button>
             </div>
           }
@@ -137,27 +136,27 @@
           @case ('payment') {
             <div class="flex flex-col gap-5">
               <div>
-                <p class="field-label">Fizetési mód</p>
+                <p class="field-label">{{ 'checkout.paymentMethod' | t }}</p>
                 <div class="flex flex-col gap-2">
                   <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
                     <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'card'" (change)="paymentMethod.set('card')" class="accent-(--color-store-primary)" />
-                    Bankkártya
+                    {{ 'checkout.card' | t }}
                   </label>
                   <label class="flex cursor-pointer items-center gap-3 border border-(--color-store-border) p-3 text-sm has-[:checked]:border-(--color-store-primary)">
                     <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cod'" (change)="paymentMethod.set('cod')" class="accent-(--color-store-primary)" />
-                    Utánvét
+                    {{ 'checkout.cod' | t }}
                   </label>
                 </div>
               </div>
 
               <div>
-                <label class="field-label" for="discount">Kedvezménykód (opcionális)</label>
+                <label class="field-label" for="discount">{{ 'checkout.discountCode' | t }}</label>
                 <div class="relative">
                   <input
                     id="discount"
                     type="text"
                     class="field-input pr-9"
-                    placeholder="Írd be a kuponkódot, ha van"
+                    [placeholder]="'checkout.discountPlaceholder' | t"
                     [value]="discountCode()"
                     (input)="onDiscountCodeInput($any($event.target).value)"
                   />
@@ -169,7 +168,7 @@
                 </div>
                 @if (discountPreview(); as d) {
                   <p class="animate-fade-up mt-1.5 text-xs text-(--color-store-primary)">
-                    „{{ d.code }}” alkalmazva — <app-product-price [price]="d.amount" [currency]="cart.currency()" /> kedvezmény
+                    „{{ d.code }}” &mdash; <app-product-price [price]="d.amount" [currency]="cart.currency()" /> {{ 'checkout.discount' | t | lowercase }}
                   </p>
                 } @else if (discountError()) {
                   <p class="mt-1.5 text-xs text-(--color-store-text-muted)">{{ discountError() }}</p>
@@ -177,7 +176,7 @@
               </div>
 
               <button type="button" class="btn-primary mt-2 transition-transform active:scale-95" [disabled]="placing()" (click)="placeOrder()">
-                {{ placing() ? 'Feldolgozás…' : 'Rendelés leadása' }}
+                {{ placing() ? ('checkout.placingOrder' | t) : ('checkout.placeOrder' | t) }}
               </button>
             </div>
           }
@@ -185,28 +184,28 @@
       </div>
 
       <aside class="h-fit border border-(--color-store-border) p-5">
-        <h2 class="heading-md mb-4 text-sm">Rendelés összesítő</h2>
+        <h2 class="heading-md mb-4 text-sm">{{ 'checkout.orderSummary' | t }}</h2>
         <div class="flex flex-col gap-2 text-sm">
           <div class="flex items-center justify-between">
-            <span class="text-(--color-store-text-muted)">Részösszeg</span>
+            <span class="text-(--color-store-text-muted)">{{ 'cart.subtotal' | t }}</span>
             <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" />
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-(--color-store-text-muted)">Szállítás</span>
+            <span class="text-(--color-store-text-muted)">{{ 'checkout.shipping' | t }}</span>
             @if (shippingRate()) {
               <app-product-price [price]="shippingRate()!.price" [currency]="cart.currency()" />
             } @else {
-              <span class="text-xs text-(--color-store-text-faint)">Később</span>
+              <span class="text-xs text-(--color-store-text-faint)">{{ 'checkout.tbd' | t }}</span>
             }
           </div>
           @if (discountPreview(); as d) {
             <div class="animate-fade-up flex items-center justify-between text-(--color-store-primary)">
-              <span>Kedvezmény ({{ d.code }})</span>
+              <span>{{ 'checkout.discount' | t }} ({{ d.code }})</span>
               <span>&minus;<app-product-price [price]="d.amount" [currency]="cart.currency()" /></span>
             </div>
           }
           <div class="mt-2 flex items-center justify-between border-t border-(--color-store-border) pt-3 text-base font-bold">
-            <span>Összesen</span>
+            <span>{{ 'checkout.total' | t }}</span>
             <app-product-price [price]="total()" [currency]="cart.currency()" size="lg" />
           </div>
         </div>

@@ -15,6 +15,7 @@ import { Pagination } from '../../shared/components/pagination/pagination';
 import { FilterPanel } from './filter-panel/filter-panel';
 import { SortDropdown } from './sort-dropdown/sort-dropdown';
 import type { FacetOption, ListingMode, SiblingLink, SortKey } from '../../models/listing.model';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 const PAGE_SIZE = 9;
 const FETCH_LIMIT = 200;
@@ -30,6 +31,7 @@ const FETCH_LIMIT = 200;
     Pagination,
     FilterPanel,
     SortDropdown,
+    TranslatePipe,
   ],
   templateUrl: './category.html',
 })

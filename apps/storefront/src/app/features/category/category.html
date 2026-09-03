@@ -36,15 +36,15 @@
         <div>
           <div class="mb-6 flex items-center justify-between gap-3">
             <button type="button" class="btn-outline text-xs lg:hidden" (click)="mobileFiltersOpen.set(true)">
-              Szűrők
+              {{ 'category.filters' | t }}
             </button>
-            <p class="text-xs text-(--color-store-text-muted)">{{ filteredProducts().length }} termék</p>
+            <p class="text-xs text-(--color-store-text-muted)">{{ filteredProducts().length }} {{ 'category.items' | t }}</p>
             <app-sort-dropdown [value]="filters().sort" (changed)="setSort($event)" />
           </div>
 
           @if (pageProducts().length === 0) {
-            <app-empty-state title="Nincs a szűrésnek megfelelő termék" message="Töröld a szűrőket, vagy nézz körül egy másik kategóriában.">
-              <button type="button" class="btn-outline mt-2" (click)="clearFilters()">Szűrők törlése</button>
+            <app-empty-state [title]="'category.noResults' | t" message="">
+              <button type="button" class="btn-outline mt-2" (click)="clearFilters()">{{ 'category.clearFilters' | t }}</button>
             </app-empty-state>
           } @else {
             <app-product-grid [products]="pageProducts()" />
@@ -61,8 +61,8 @@
     <div class="absolute inset-0 bg-black/60" (click)="mobileFiltersOpen.set(false)"></div>
     <div class="section-dark absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col overflow-y-auto border-r border-(--color-store-border) p-6">
       <div class="mb-6 flex items-center justify-between">
-        <h2 class="heading-md">Szűrők</h2>
-        <button type="button" class="icon-btn" (click)="mobileFiltersOpen.set(false)" aria-label="Szűrők bezárása">&times;</button>
+        <h2 class="heading-md">{{ 'category.filters' | t }}</h2>
+        <button type="button" class="icon-btn" (click)="mobileFiltersOpen.set(false)" [attr.aria-label]="'category.filters' | t">&times;</button>
       </div>
       <app-filter-panel
         [siblingsTitle]="mode() === 'category' ? 'Kategóriák' : 'Böngészés'"

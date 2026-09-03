@@ -1,7 +1,11 @@
 <div class="section-dark hidden border-b border-(--color-store-border) sm:block">
   <div class="container-store flex items-center justify-between py-2 text-[11px] text-(--color-store-text-muted)">
-    <span>Ingyenes nemzetközi szállítás &middot; 14 napos visszaküldés</span>
-    <span>{{ storeService.store()?.currency ?? 'EUR' }}</span>
+    <span>{{ 'utility.shipping' | t }} &middot; {{ 'utility.returns' | t }}</span>
+    <div class="flex items-center gap-3">
+      <app-language-switcher />
+      <span class="text-(--color-store-border)">|</span>
+      <app-currency-switcher />
+    </div>
   </div>
 </div>
 
@@ -12,7 +16,7 @@
         type="button"
         class="icon-btn lg:hidden"
         (click)="mobileMenuOpen.set(true)"
-        aria-label="Open menu"
+        [attr.aria-label]="'nav.menu' | t"
       >
         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
           <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
@@ -28,7 +32,7 @@
     </div>
 
     <nav class="hidden items-center gap-7 text-xs font-semibold tracking-wide uppercase lg:flex">
-      <a routerLink="/" routerLinkActive="text-(--color-store-primary)" [routerLinkActiveOptions]="{ exact: true }" class="hover:text-(--color-store-primary)">Kezdőlap</a>
+      <a routerLink="/" routerLinkActive="text-(--color-store-primary)" [routerLinkActiveOptions]="{ exact: true }" class="hover:text-(--color-store-primary)">{{ 'nav.home' | t }}</a>
       @for (top of categoryTree(); track top._id) {
         @if (top.children.length > 0) {
           <div class="group relative py-2">
@@ -48,24 +52,24 @@
           <a [routerLink]="['/category', top.slug]" class="hover:text-(--color-store-primary)">{{ top.name }}</a>
         }
       }
-      <a routerLink="/brands" class="hover:text-(--color-store-primary)">Márkák</a>
-      <a [routerLink]="['/collection', 'sale']" class="text-(--color-store-primary)">Akció</a>
-      <a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-primary)">Újdonságok</a>
+      <a routerLink="/brands" class="hover:text-(--color-store-primary)">{{ 'nav.brands' | t }}</a>
+      <a [routerLink]="['/collection', 'sale']" class="text-(--color-store-primary)">{{ 'nav.sale' | t }}</a>
+      <a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-primary)">{{ 'nav.newArrivals' | t }}</a>
     </nav>
 
     <div class="flex items-center gap-1">
-      <a routerLink="/search" class="icon-btn" aria-label="Keresés">
+      <a routerLink="/search" class="icon-btn" [attr.aria-label]="'nav.search' | t">
         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
           <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
         </svg>
       </a>
-      <a routerLink="/login" class="icon-btn" aria-label="Fiók">
+      <a routerLink="/login" class="icon-btn" [attr.aria-label]="'nav.account' | t">
         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
           <path stroke="currentColor" stroke-width="1.8" d="M20 21a8 8 0 1 0-16 0" />
           <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" />
         </svg>
       </a>
-      <button type="button" class="icon-btn relative transition-transform active:scale-90" (click)="cart.openDrawer()" aria-label="Kosár">
+      <button type="button" class="icon-btn relative transition-transform active:scale-90" (click)="cart.openDrawer()" [attr.aria-label]="'nav.cart' | t">
         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
           <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M6 6h15l-1.5 9h-12z" />
           <path stroke="currentColor" stroke-width="1.8" d="M6 6 5 3H2" />

@@ -1,18 +1,20 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../core/api/cart.service';
 import { CheckoutService } from '../../core/api/checkout.service';
 import { ToastService } from '../../core/toast.service';
 import { ProductPrice } from '../../shared/components/product-price/product-price';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 type Step = 'cart' | 'information' | 'shipping' | 'payment';
 
-const STEPS: { key: Step; label: string }[] = [
-  { key: 'cart', label: 'Kosár' },
-  { key: 'information', label: 'Adatok' },
-  { key: 'shipping', label: 'Szállítás' },
-  { key: 'payment', label: 'Fizetés' },
+const STEPS: { key: Step; labelKey: string }[] = [
+  { key: 'cart', labelKey: 'checkout.step.cart' },
+  { key: 'information', labelKey: 'checkout.step.information' },
+  { key: 'shipping', labelKey: 'checkout.step.shipping' },
+  { key: 'payment', labelKey: 'checkout.step.payment' },
 ];
 
 // Hungary first — this is the storefront's launch market.
@@ -29,7 +31,7 @@ const COUNTRIES = [
 
 @Component({
   selector: 'app-checkout-page',
-  imports: [ReactiveFormsModule, RouterLink, ProductPrice],
+  imports: [ReactiveFormsModule, RouterLink, ProductPrice, TranslatePipe, LowerCasePipe],
   templateUrl: './checkout.html',
 })
 export class CheckoutPage {

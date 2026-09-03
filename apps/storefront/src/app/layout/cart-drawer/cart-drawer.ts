@@ -4,10 +4,11 @@ import { CartService } from '../../core/api/cart.service';
 import { ProductPrice } from '../../shared/components/product-price/product-price';
 import { CartItemRow } from '../../shared/components/cart-item-row/cart-item-row';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-cart-drawer',
-  imports: [ProductPrice, CartItemRow, EmptyState],
+  imports: [ProductPrice, CartItemRow, EmptyState, TranslatePipe],
   templateUrl: './cart-drawer.html',
 })
 export class CartDrawer {

@@ -7,7 +7,7 @@ import type { EditorialContent } from '../../../../core/config/home-content.conf
   imports: [RouterLink],
   template: `
     <section class="section-dark relative flex min-h-[380px] items-end overflow-hidden sm:min-h-[440px]">
-      <img [src]="content().image" alt="" class="absolute inset-0 h-full w-full object-cover" />
+      <img [src]="content().image" alt="" class="photo-tone absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10"></div>
       <div class="container-store relative py-10">
         <h2 class="heading-lg max-w-md">{{ content().title }}</h2>

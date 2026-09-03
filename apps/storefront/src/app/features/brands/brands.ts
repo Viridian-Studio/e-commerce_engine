@@ -21,7 +21,7 @@ import { EmptyState } from '../../shared/components/empty-state/empty-state';
             @for (brand of brands(); track brand._id) {
               <a [routerLink]="['/brand', brand.slug]" class="group relative block aspect-square overflow-hidden bg-(--color-store-light)">
                 @if (brand.image) {
-                  <img [src]="brand.image" [alt]="brand.name" class="h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105" />
+                  <img [src]="brand.image" [alt]="brand.name" class="photo-tone h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105" />
                 }
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
                 <p class="absolute bottom-3 left-3 text-sm font-bold tracking-wide text-white uppercase">{{ brand.name }}</p>

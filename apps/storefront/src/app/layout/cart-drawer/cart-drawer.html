@@ -9,14 +9,14 @@
     [class]="cart.drawerOpen() ? 'translate-x-0' : 'translate-x-full'"
   >
     <div class="flex items-center justify-between border-b border-(--color-store-border) px-5 py-4">
-      <h2 class="heading-md">Kosarad ({{ cart.itemCount() }})</h2>
-      <button type="button" class="icon-btn" (click)="cart.closeDrawer()" aria-label="Kosár bezárása">&times;</button>
+      <h2 class="heading-md">{{ 'cart.title' | t }} ({{ cart.itemCount() }})</h2>
+      <button type="button" class="icon-btn" (click)="cart.closeDrawer()" [attr.aria-label]="'nav.cart' | t">&times;</button>
     </div>
 
     <div class="flex-1 overflow-y-auto px-5">
       @if (!cart.cart() || cart.cart()!.items.length === 0) {
-        <app-empty-state title="A kosarad üres" message="Adj hozzá valamit, ami tetszik — itt fog megjelenni.">
-          <button type="button" class="btn-primary mt-2" (click)="cart.closeDrawer()">Vásárlás folytatása</button>
+        <app-empty-state [title]="'cart.empty' | t" [message]="'cart.emptyMessage' | t">
+          <button type="button" class="btn-primary mt-2" (click)="cart.closeDrawer()">{{ 'cart.continueShopping' | t }}</button>
         </app-empty-state>
       } @else {
         <div class="divide-y divide-(--color-store-border)">
@@ -35,12 +35,12 @@
 
     @if (cart.cart() && cart.cart()!.items.length > 0) {
       <div class="border-t border-(--color-store-border) px-5 py-5">
-        <p class="mb-4 text-xs text-(--color-store-text-muted)">Szállítási díj a pénztárnál kerül kiszámításra.</p>
+        <p class="mb-4 text-xs text-(--color-store-text-muted)">{{ 'cart.shippingNote' | t }}</p>
         <div class="mb-4 flex items-center justify-between text-sm font-semibold">
-          <span>Részösszeg</span>
+          <span>{{ 'cart.subtotal' | t }}</span>
           <app-product-price [price]="cart.subtotal()" [currency]="cart.currency()" size="lg" />
         </div>
-        <button type="button" class="btn-primary w-full" (click)="goToCheckout()">Tovább a fizetéshez</button>
+        <button type="button" class="btn-primary w-full" (click)="goToCheckout()">{{ 'cart.checkout' | t }}</button>
       </div>
     }
   </aside>

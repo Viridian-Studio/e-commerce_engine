@@ -32,6 +32,17 @@
     }
   },
   "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/angular/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "testTargetName": "test",
+        "extractI18nTargetName": "extract-i18n"
+      }
+    }
+  ],
   "generators": {
     "@nx/angular:application": {
       "style": "css",

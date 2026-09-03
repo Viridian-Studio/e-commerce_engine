@@ -181,4 +181,13 @@ button {
     @apply w-full border border-black/15 bg-white px-3 py-2.5 text-sm text-(--color-store-ink)
       outline-none transition-colors placeholder:text-black/40 focus:border-(--color-store-ink);
   }
+
+  /* Unifying tone for full-bleed editorial/lifestyle photography (hero,
+     campaign banner, category cards, lookbook) so stand-in stock photos read
+     as one deliberate moody palette instead of a grab-bag of random shots.
+     Product photography tiles are deliberately left untouched — those stay
+     true-to-life the way real garment photography would. */
+  .photo-tone {
+    filter: grayscale(25%) contrast(1.1) brightness(0.85) saturate(1.15);
+  }
 }

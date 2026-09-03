@@ -4,17 +4,18 @@ import { CollectionService } from '../../../../core/api/collection.service';
 import { ProductGrid } from '../../../../shared/components/product-grid/product-grid';
 import { ProductGridSkeleton } from '../../../../shared/components/loading-skeleton/loading-skeleton';
 import { SectionHeading } from '../../../../shared/components/section-heading/section-heading';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import type { Product } from '@ecom/types';
 
 const FEATURED_COLLECTION_SLUG = 'best-sellers';
 
 @Component({
   selector: 'app-featured-products',
-  imports: [ProductGrid, ProductGridSkeleton, SectionHeading],
+  imports: [ProductGrid, ProductGridSkeleton, SectionHeading, TranslatePipe],
   template: `
     <section class="section-dark py-14 sm:py-20">
       <div class="container-store">
-        <app-section-heading title="Featured Products" [linkUrl]="viewAllUrl()" />
+        <app-section-heading [title]="'home.featured' | t" [linkUrl]="viewAllUrl()" />
         @if (loading()) {
           <app-product-grid-skeleton [count]="5" />
         } @else if (products().length > 0) {

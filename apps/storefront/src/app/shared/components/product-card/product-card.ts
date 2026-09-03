@@ -3,15 +3,16 @@ import { RouterLink } from '@angular/router';
 import type { Product } from '@ecom/types';
 import { WishlistService } from '../../../core/wishlist.service';
 import { ProductPrice } from '../product-price/product-price';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 const NEW_WINDOW_DAYS = 21;
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterLink, ProductPrice],
+  imports: [RouterLink, ProductPrice, TranslatePipe],
   template: `
     <article class="group">
-      <a [routerLink]="['/product', product().slug]" class="relative block overflow-hidden bg-(--color-store-light)">
+      <a [routerLink]="['/product', product().slug]" class="relative block overflow-hidden bg-(--color-store-light) shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-shadow duration-300 group-hover:shadow-[0_8px_28px_-6px_rgba(0,0,0,0.55)]">
         <div class="aspect-[4/5] w-full overflow-hidden">
           <img
             [src]="primaryImage()"
@@ -31,7 +32,7 @@ const NEW_WINDOW_DAYS = 21;
 
         <div class="absolute top-2 left-2 flex flex-col gap-1.5">
           @if (isNew()) {
-            <span class="badge-new">Új</span>
+            <span class="badge-new">{{ 'product.new' | t }}</span>
           }
           @if (discountPercent(); as pct) {
             <span class="badge-sale">-{{ pct }}%</span>
@@ -42,7 +43,7 @@ const NEW_WINDOW_DAYS = 21;
           type="button"
           class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center bg-white/90 text-(--color-store-ink) transition-transform hover:scale-105"
           [attr.aria-pressed]="wished()"
-          [attr.aria-label]="wished() ? 'Eltávolítás a kedvencekből' : 'Hozzáadás a kedvencekhez'"
+          [attr.aria-label]="'nav.wishlist' | t"
           (click)="onWishlist($event)"
         >
           <svg viewBox="0 0 24 24" [attr.fill]="wished() ? 'currentColor' : 'none'" class="h-4 w-4">

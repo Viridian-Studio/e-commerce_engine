@@ -6,6 +6,7 @@ import { CategoryService } from '../../core/api/category.service';
 import { CartService } from '../../core/api/cart.service';
 import { WishlistService } from '../../core/wishlist.service';
 import { ToastService } from '../../core/toast.service';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { Breadcrumb, type BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb';
 import { ProductPrice } from '../../shared/components/product-price/product-price';
 import { ProductGrid } from '../../shared/components/product-grid/product-grid';
@@ -15,6 +16,7 @@ import { QuantityStepper } from '../../shared/components/quantity-stepper/quanti
 import { ProductGallery } from './product-gallery/product-gallery';
 import { VariantSelector } from './variant-selector/variant-selector';
 import { ProductTabs } from './product-tabs/product-tabs';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 const NEW_WINDOW_DAYS = 21;
 
@@ -30,6 +32,7 @@ const NEW_WINDOW_DAYS = 21;
     ProductGallery,
     VariantSelector,
     ProductTabs,
+    TranslatePipe,
   ],
   templateUrl: './product.html',
 })
@@ -40,6 +43,7 @@ export class ProductPage {
   private readonly wishlist = inject(WishlistService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
 
   readonly slug = input.required<string>();
 
@@ -175,7 +179,7 @@ export class ProductPage {
       if (buyNow) {
         this.router.navigateByUrl('/checkout');
       } else {
-        this.toast.success('Kosárba téve');
+        this.toast.success(this.i18n.t('product.addedToCart'));
         this.cart.openDrawer();
       }
     } finally {

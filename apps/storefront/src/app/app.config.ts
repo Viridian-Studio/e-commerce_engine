@@ -6,6 +6,7 @@ import { storeHeaderInterceptor } from './core/interceptors/store-header.interce
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { StoreService } from './core/api/store.service';
 import { CartService } from './core/api/cart.service';
+import { ThemeService } from './core/theme/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +16,11 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       const store = inject(StoreService);
       const cart = inject(CartService);
-      return store.load().then(() => cart.init());
+      const theme = inject(ThemeService);
+      return store.load().then(() => {
+        theme.apply(store.store()?.theme);
+        return cart.init();
+      });
     }),
   ],
 };

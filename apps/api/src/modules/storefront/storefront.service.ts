@@ -69,8 +69,9 @@ export class StorefrontService {
     return { amount, code: discount.code };
   }
 
-  getOrCreateCart(storeId: string, token?: string): Promise<Cart> {
-    return this.carts.getOrCreate(storeId, token);
+  async getOrCreateCart(storeId: string, token?: string): Promise<Cart> {
+    const store = await this.stores.findById(storeId);
+    return this.carts.getOrCreate(storeId, token, undefined, store.currency);
   }
 
   async getCartByToken(storeId: string, token: string): Promise<Cart> {
@@ -80,7 +81,8 @@ export class StorefrontService {
   }
 
   async addItem(storeId: string, token: string | undefined, dto: AddCartItemDto): Promise<Cart> {
-    const cart = await this.carts.getOrCreate(storeId, token);
+    const store = await this.stores.findById(storeId);
+    const cart = await this.carts.getOrCreate(storeId, token, undefined, store.currency);
     return this.carts.addItem(cart._id, dto);
   }
 

@@ -16,7 +16,9 @@
     "build:admin": "npm run build --workspace @ecom/admin",
     "build:storefront": "npm run build --workspace @ecom/storefront",
     "seed": "npm run seed --workspace @ecom/api",
-    "test:api": "npm run test --workspace @ecom/api"
+    "test:api": "npm run test --workspace @ecom/api",
+    "nx:admin": "nx serve @ecom/admin",
+    "nx:storefront": "nx serve @ecom/storefront"
   },
   "engines": {
     "node": ">=20"

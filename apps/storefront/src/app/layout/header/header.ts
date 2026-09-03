@@ -5,10 +5,13 @@ import { CategoryService, type CategoryNode } from '../../core/api/category.serv
 import { CartService } from '../../core/api/cart.service';
 import { StoreService } from '../../core/api/store.service';
 import { MobileMenu } from '../mobile-menu/mobile-menu';
+import { LanguageSwitcher } from './language-switcher/language-switcher';
+import { CurrencySwitcher } from './currency-switcher/currency-switcher';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, UpperCasePipe, MobileMenu],
+  imports: [RouterLink, RouterLinkActive, UpperCasePipe, MobileMenu, LanguageSwitcher, CurrencySwitcher, TranslatePipe],
   templateUrl: './header.html',
 })
 export class Header {
