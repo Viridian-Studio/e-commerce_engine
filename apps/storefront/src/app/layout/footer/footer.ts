@@ -6,15 +6,13 @@ import { StoreService } from '../../core/api/store.service';
 import { ToastService } from '../../core/toast.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { CUSTOMER_CARE_SLUGS, ABOUT_SLUGS, INFO_PAGES } from '../../features/info/info-data';
 
-const CUSTOMER_CARE: Record<'hu' | 'en', string[]> = {
-  hu: ['Szállítás', 'Visszaküldés', 'Gyakori kérdések', 'Méret táblázat'],
-  en: ['Shipping & Delivery', 'Returns', 'FAQ', 'Size Guide'],
-};
-const ABOUT: Record<'hu' | 'en', string[]> = {
-  hu: ['Rólunk', 'Fenntarthatóság', 'Adatvédelem', 'Általános szerződési feltételek'],
-  en: ['Our Story', 'Sustainability', 'Privacy Policy', 'Terms & Conditions'],
-};
+interface FooterLink {
+  slug: string;
+  label: string;
+}
+
 const PAYMENT_ICONS = ['VISA', 'MASTERCARD', 'PAYPAL', 'APPLE PAY', 'GPAY'];
 
 @Component({
@@ -29,8 +27,12 @@ export class Footer {
   protected readonly storeService = inject(StoreService);
 
   protected readonly shopLinks = signal<CategoryNode[]>([]);
-  protected readonly customerCare = computed(() => CUSTOMER_CARE[this.i18n.lang()]);
-  protected readonly about = computed(() => ABOUT[this.i18n.lang()]);
+  protected readonly customerCare = computed<FooterLink[]>(() =>
+    CUSTOMER_CARE_SLUGS.map((slug) => ({ slug, label: INFO_PAGES[slug]?.content[this.i18n.lang()].title ?? slug })),
+  );
+  protected readonly about = computed<FooterLink[]>(() =>
+    ABOUT_SLUGS.map((slug) => ({ slug, label: INFO_PAGES[slug]?.content[this.i18n.lang()].title ?? slug })),
+  );
   protected readonly paymentIcons = PAYMENT_ICONS;
   protected readonly year = new Date().getFullYear();
 

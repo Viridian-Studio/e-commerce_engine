@@ -30,8 +30,8 @@
     <div>
       <h3 class="heading-md mb-3 text-sm">{{ 'footer.customerCare' | t }}</h3>
       <ul class="flex flex-col gap-2 text-sm text-(--color-store-text-muted)">
-        @for (item of customerCare(); track item) {
-          <li><span class="cursor-default">{{ item }}</span></li>
+        @for (item of customerCare(); track item.slug) {
+          <li><a [routerLink]="['/pages', item.slug]" class="hover:text-(--color-store-text)">{{ item.label }}</a></li>
         }
       </ul>
     </div>
@@ -39,8 +39,8 @@
     <div>
       <h3 class="heading-md mb-3 text-sm">{{ 'footer.about' | t }}</h3>
       <ul class="flex flex-col gap-2 text-sm text-(--color-store-text-muted)">
-        @for (item of about(); track item) {
-          <li><span class="cursor-default">{{ item }}</span></li>
+        @for (item of about(); track item.slug) {
+          <li><a [routerLink]="['/pages', item.slug]" class="hover:text-(--color-store-text)">{{ item.label }}</a></li>
         }
       </ul>
       <h3 class="heading-md mt-6 mb-3 text-sm">{{ 'footer.follow' | t }}</h3>

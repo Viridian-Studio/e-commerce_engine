@@ -63,6 +63,10 @@ export const routes: Routes = [
         path: 'wishlist',
         loadComponent: () => import('./features/wishlist/wishlist').then((m) => m.WishlistPage),
       },
+      {
+        path: 'pages/:slug',
+        loadComponent: () => import('./features/info/info').then((m) => m.InfoPage),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
