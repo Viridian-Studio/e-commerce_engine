@@ -1,34 +1,142 @@
-<div class="mb-6">
-  <h1 class="text-lg font-semibold text-(--color-text)">Settings</h1>
-  <p class="text-sm text-(--color-text-muted)">Store-scoped key/value settings for storefront configuration.</p>
+<div class="mb-8">
+  <h1 class="text-xl font-semibold text-(--color-text)">Settings</h1>
+  <p class="mt-1 text-sm text-(--color-text-muted)">Manage integrations and store-scoped configuration.</p>
 </div>
 
-<div class="card max-w-2xl">
-  <div class="border-b border-(--color-border) p-4">
-    <div class="flex gap-2">
-      <input type="text" class="input" placeholder="key" [(ngModel)]="newKey" />
-      <input type="text" class="input" placeholder="value (plain text or JSON)" [(ngModel)]="newValue" />
-      <button type="button" class="btn-primary shrink-0" [disabled]="saving() || !newKey.trim()" (click)="addSetting()">Add</button>
-    </div>
-  </div>
+<div class="max-w-3xl space-y-8">
 
-  @if (loading()) {
-    <div class="p-4">
-      <div class="h-8 animate-pulse rounded bg-(--color-surface-2)"></div>
+  <!-- ─── Integrations ─── -->
+  <section>
+    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--color-text-faint)">Integrations</h2>
+
+    <!-- Viridian Warehouse connection card -->
+    <div class="card overflow-hidden">
+      <!-- Left accent bar -->
+      <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-start gap-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8b0000] to-[#5a0000] text-white shadow-lg shadow-[#8b0000]/20">
+            <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6">
+              <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z" />
+              <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 21V12h6v9" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-sm font-semibold text-(--color-text)">Viridian Warehouse</h3>
+              @if (viridianConnected()) {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-(--color-success-soft) px-2.5 py-1 text-[11px] font-medium text-(--color-success)">
+                  <span class="h-2 w-2 rounded-full bg-(--color-success)"></span>
+                  Connected
+                </span>
+              } @else {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-(--color-surface-2) px-2.5 py-1 text-[11px] font-medium text-(--color-text-muted)">
+                  <span class="h-2 w-2 rounded-full bg-(--color-text-faint)"></span>
+                  Not connected
+                </span>
+              }
+            </div>
+            <p class="mt-1 text-xs leading-relaxed text-(--color-text-muted)">Sync inventory and import products from your warehouse management system.</p>
+          </div>
+        </div>
+
+        <div class="flex shrink-0 gap-2">
+          @if (viridianConnected()) {
+            <button type="button" class="btn-secondary" (click)="openViridianModal()">Configure</button>
+            <button type="button" class="btn-danger" (click)="disconnectViridian()">Disconnect</button>
+          } @else {
+            <button
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-[#8b0000] to-[#6a0000] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#8b0000]/30 transition-all hover:from-[#a01515] hover:to-[#7a0000] hover:shadow-[#8b0000]/40 active:scale-[0.97]"
+              (click)="openViridianModal()"
+            >
+              <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7Z" />
+              </svg>
+              <span class="whitespace-nowrap">Összekapcsolás</span>
+            </button>
+          }
+        </div>
+      </div>
     </div>
-  } @else if (rows().length === 0) {
-    <app-empty-state title="No settings yet" message="Add key/value pairs — e.g. checkout_notice, social_links." />
-  } @else {
-    <div class="divide-y divide-(--color-border)">
-      @for (row of rows(); track row.key) {
-        <div class="flex items-center gap-2 px-4 py-3">
-          <span class="w-40 shrink-0 truncate font-mono text-sm text-(--color-text)">{{ row.key }}</span>
-          <input type="text" class="input" [(ngModel)]="row.value" (blur)="updateRow(row)" />
-          <button type="button" class="icon-btn shrink-0 hover:text-(--color-danger)" (click)="removeRow(row)" aria-label="Remove">
-            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z" /></svg>
+  </section>
+
+  <!-- ─── Custom settings ─── -->
+  <section>
+    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--color-text-faint)">Custom settings</h2>
+
+    <div class="card">
+      <!-- Add new setting -->
+      <div class="border-b border-(--color-border) p-4">
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <input type="text" class="input sm:w-48" placeholder="key" [(ngModel)]="newKey" />
+          <input type="text" class="input flex-1" placeholder="value (plain text or JSON)" [(ngModel)]="newValue" />
+          <button type="button" class="btn-primary shrink-0" [disabled]="saving() || !newKey.trim()" (click)="addSetting()">
+            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14" /></svg>
+            Add
           </button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="space-y-2 p-4">
+          <div class="h-10 animate-pulse rounded-lg bg-(--color-surface-2)"></div>
+          <div class="h-10 animate-pulse rounded-lg bg-(--color-surface-2)"></div>
+        </div>
+      } @else if (rows().length === 0) {
+        <app-empty-state title="No custom settings" message="Add key/value pairs — e.g. checkout_notice, social_links." />
+      } @else {
+        <div class="divide-y divide-(--color-border)">
+          @for (row of rows(); track row.key) {
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-(--color-surface-2)/50">
+              <span class="w-44 shrink-0 truncate font-mono text-xs text-(--color-text-muted)">{{ row.key }}</span>
+              <input type="text" class="input flex-1 font-mono text-xs" [(ngModel)]="row.value" (blur)="updateRow(row)" />
+              <button type="button" class="icon-btn shrink-0 hover:text-(--color-danger)" (click)="removeRow(row)" aria-label="Remove">
+                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z" /></svg>
+              </button>
+            </div>
+          }
         </div>
       }
     </div>
-  }
+  </section>
 </div>
+
+<!-- Viridian Warehouse connection modal -->
+<app-modal [open]="viridianModalOpen()" title="Viridian Warehouse összekapcsolása" (close)="viridianModalOpen.set(false)">
+  <div class="space-y-4">
+    <div class="flex items-start gap-3 rounded-lg bg-(--color-surface-2) px-4 py-3 text-xs leading-relaxed text-(--color-text-muted)">
+      <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 shrink-0 mt-0.5 text-(--color-text-faint)"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+      <span>Add meg a Viridian Warehouse API kulcsot a raktárrendszered összekapcsolásához. A rendszer automatikusan teszteli a kapcsolatot mentés előtt — csak érvényes kulcs kerül elmentésre.</span>
+    </div>
+    <div>
+      <label class="label">API key</label>
+      <input type="password" class="input font-mono text-xs" placeholder="vw_..." [(ngModel)]="viridianApiKey" autocomplete="off" />
+    </div>
+
+    @if (viridianTestResult()) {
+      @if (viridianTestResult()!.connected) {
+        <div class="flex items-center gap-2.5 rounded-lg bg-(--color-success-soft) px-4 py-3 text-sm text-(--color-success)">
+          <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 shrink-0"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7" /></svg>
+          <span>{{ viridianTestResult()!.message }}@if (viridianTestResult()!.warehouseName) { — {{ viridianTestResult()!.warehouseName }} }</span>
+        </div>
+      } @else {
+        <div class="flex items-start gap-2.5 rounded-lg bg-(--color-danger-soft) px-4 py-3 text-sm text-(--color-danger)">
+          <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 shrink-0 mt-0.5"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          <span>{{ viridianTestResult()!.message }}</span>
+        </div>
+      }
+    }
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" class="btn-secondary" (click)="viridianModalOpen.set(false)">Cancel</button>
+      <button type="button" class="btn-primary" [disabled]="viridianSaving() || !viridianApiKey.trim()" (click)="saveViridianConnection()">
+        @if (viridianSaving()) {
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 animate-spin"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9" /></svg>
+          Testing…
+        } @else {
+          {{ viridianConnected() ? 'Update connection' : 'Connect & test' }}
+        }
+      </button>
+    </div>
+  </div>
+</app-modal>

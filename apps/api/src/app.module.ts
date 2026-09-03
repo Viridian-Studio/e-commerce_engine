@@ -22,6 +22,7 @@ import { ContentModule } from './modules/content/content.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { StorefrontModule } from './modules/storefront/storefront.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { IntegrationsModule } from './modules/integrations/integrations.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     SettingsModule,
     StorefrontModule,
     DashboardModule,
+    IntegrationsModule,
   ],
   controllers: [AppController],
 })
