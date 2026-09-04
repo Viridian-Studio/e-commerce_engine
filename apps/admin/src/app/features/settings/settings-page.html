@@ -41,6 +41,7 @@
 
         <div class="flex shrink-0 gap-2">
           @if (viridianConnected()) {
+            <button type="button" class="btn-primary" (click)="openViridianImportModal()">Importálás</button>
             <button type="button" class="btn-secondary" (click)="openViridianModal()">Configure</button>
             <button type="button" class="btn-danger" (click)="disconnectViridian()">Disconnect</button>
           } @else {
@@ -204,6 +205,63 @@
           {{ viridianConnected() ? 'Update connection' : 'Connect & test' }}
         }
       </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Viridian Warehouse import modal -->
+<app-modal [open]="viridianImportModalOpen()" title="Importálás a Viridian Warehouse-ból" (close)="viridianImportModalOpen.set(false)">
+  <div class="space-y-4">
+    <p class="text-xs leading-relaxed text-(--color-text-muted)">
+      Válaszd ki, mely raktári tételeket szeretnéd vázlat termékként áthozni. Az importált termékek ára 0 lesz — ezt és a többi adatot utólag kell kitölteni publikálás előtt.
+    </p>
+
+    @if (viridianImportLoading()) {
+      <div class="flex items-center justify-center py-10 text-sm text-(--color-text-muted)">Betöltés…</div>
+    } @else if (viridianInventory().length === 0) {
+      <div class="rounded-lg bg-(--color-surface-2) px-4 py-6 text-center text-sm text-(--color-text-muted)">
+        Nincs elérhető tétel a raktárban.
+      </div>
+    } @else {
+      <div class="max-h-80 space-y-1 overflow-y-auto rounded-lg border border-(--color-border) p-2">
+        @for (item of viridianInventory(); track item.id) {
+          <label class="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 hover:bg-(--color-surface-2)">
+            <input
+              type="checkbox"
+              [checked]="viridianSelectedIds().has(item.id)"
+              (change)="toggleViridianItem(item.id)"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-sm font-medium text-(--color-text)">{{ item.name }}</div>
+              <div class="text-xs text-(--color-text-muted)">
+                {{ item.sku }}
+                @if (item.category) { · {{ item.category }} }
+                · {{ item.availableQuantity }} {{ item.unit }} elérhető
+              </div>
+            </div>
+          </label>
+        }
+      </div>
+    }
+
+    <div class="flex items-center justify-between gap-2 pt-2">
+      <span class="text-xs text-(--color-text-muted)">{{ viridianSelectedIds().size }} kiválasztva</span>
+      <div class="flex gap-2">
+        <button type="button" class="btn-secondary" (click)="viridianImportModalOpen.set(false)">Mégse</button>
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="viridianImportSaving() || viridianSelectedIds().size === 0"
+          (click)="importViridianSelection()"
+        >
+          @if (viridianImportSaving()) {
+            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 animate-spin"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9" /></svg>
+            Importálás…
+          } @else {
+            Kiválasztottak importálása
+          }
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

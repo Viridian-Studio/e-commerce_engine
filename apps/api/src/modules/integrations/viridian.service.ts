@@ -1,10 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadGatewayException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export interface ViridianTestResult {
   connected: boolean;
   message: string;
   warehouseName?: string;
+}
+
+export interface ViridianInventoryItem {
+  id: string;
+  name: string;
+  sku: string;
+  category: string | null;
+  quantity: number;
+  availableQuantity: number;
+  unit: string;
 }
 
 /**
@@ -21,7 +31,17 @@ export class ViridianService {
   private readonly baseUrl: string;
 
   constructor(private readonly config: ConfigService) {
-    this.baseUrl = (this.config.get<string>('VIRIDIAN_WAREHOUSE_URL') ?? '').replace(/\/$/, '');
+    const raw = this.config.get<string>('VIRIDIAN_WAREHOUSE_URL') ?? '';
+    // The warehouse API serves every route under `/api/v1` regardless of
+    // whatever path (if any) the configured URL includes — derive the
+    // origin and always append the versioned prefix ourselves, so a
+    // misconfigured env var (e.g. missing `/v1`, or a bare host) can't
+    // silently 404 against the wrong route.
+    try {
+      this.baseUrl = raw ? `${new URL(raw).origin}/api/v1` : '';
+    } catch {
+      this.baseUrl = '';
+    }
   }
 
   /**
@@ -65,5 +85,36 @@ export class ViridianService {
       this.logger.warn(`Viridian Warehouse connection test failed: ${msg}`);
       return { connected: false, message: `Could not reach warehouse: ${msg}` };
     }
+  }
+
+  /**
+   * Fetches the warehouse's inventory so the admin can pick what to bring
+   * over as draft products.
+   */
+  async listInventory(apiKey: string): Promise<ViridianInventoryItem[]> {
+    if (!this.baseUrl) {
+      throw new BadGatewayException('VIRIDIAN_WAREHOUSE_URL is not configured on the server');
+    }
+
+    let res: Response;
+    try {
+      res = await fetch(`${this.baseUrl}/export/inventory`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${apiKey}`, Accept: 'application/json' },
+        signal: AbortSignal.timeout(10_000),
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      throw new BadGatewayException(`Could not reach warehouse: ${msg}`);
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      throw new UnauthorizedException('Invalid API key — authentication failed');
+    }
+    if (!res.ok) {
+      throw new BadGatewayException(`Warehouse responded with HTTP ${res.status}`);
+    }
+
+    return (await res.json()) as ViridianInventoryItem[];
   }
 }

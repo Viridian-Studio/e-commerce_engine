@@ -1,6 +1,10 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SettingsService, type ViridianTestResult } from '../../core/services/settings.service';
+import {
+  SettingsService,
+  type ViridianInventoryItem,
+  type ViridianTestResult,
+} from '../../core/services/settings.service';
 import { StoreContextService } from '../../core/store-context.service';
 import { NotificationService } from '../../core/notification.service';
 import { ConfirmService } from '../../shared/confirm-dialog/confirm.service';
@@ -42,6 +46,13 @@ export class SettingsPage {
   protected readonly viridianTesting = signal(false);
   protected readonly viridianTestResult = signal<ViridianTestResult | null>(null);
   protected viridianApiKey = '';
+
+  // Viridian Warehouse import
+  protected readonly viridianImportModalOpen = signal(false);
+  protected readonly viridianImportLoading = signal(false);
+  protected readonly viridianImportSaving = signal(false);
+  protected readonly viridianInventory = signal<ViridianInventoryItem[]>([]);
+  protected readonly viridianSelectedIds = signal<Set<string>>(new Set());
 
   // Maintenance mode
   protected readonly maintenanceEnabled = signal(false);
@@ -112,6 +123,49 @@ export class SettingsPage {
       this.notifications.error(extractErrorMessage(err));
     } finally {
       this.viridianSaving.set(false);
+    }
+  }
+
+  protected async openViridianImportModal(): Promise<void> {
+    this.viridianImportModalOpen.set(true);
+    this.viridianSelectedIds.set(new Set());
+    this.viridianImportLoading.set(true);
+    try {
+      const items = await this.settingsService.listViridianInventory(this.viridianApiKey.trim());
+      this.viridianInventory.set(items);
+    } catch (err) {
+      this.notifications.error(extractErrorMessage(err));
+      this.viridianInventory.set([]);
+    } finally {
+      this.viridianImportLoading.set(false);
+    }
+  }
+
+  protected toggleViridianItem(id: string): void {
+    const next = new Set(this.viridianSelectedIds());
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    this.viridianSelectedIds.set(next);
+  }
+
+  protected async importViridianSelection(): Promise<void> {
+    const itemIds = Array.from(this.viridianSelectedIds());
+    if (itemIds.length === 0) return;
+    this.viridianImportSaving.set(true);
+    try {
+      const result = await this.settingsService.importViridianItems(this.viridianApiKey.trim(), itemIds);
+      this.viridianImportModalOpen.set(false);
+      if (result.skipped > 0) {
+        this.notifications.success(
+          `${result.imported} termék importálva, ${result.skipped} kihagyva (már létező cikkszám).`,
+        );
+      } else {
+        this.notifications.success(`${result.imported} termék importálva.`);
+      }
+    } catch (err) {
+      this.notifications.error(extractErrorMessage(err));
+    } finally {
+      this.viridianImportSaving.set(false);
     }
   }
 
