@@ -63,7 +63,7 @@ import { StoreContextService } from '../../core/store-context.service';
           </svg>
         </button>
         @if (notifOpen()) {
-          <div class="card absolute top-10 right-0 w-64 p-3 text-sm shadow-xl">
+          <div class="card absolute top-10 right-0 z-50 w-64 p-3 text-sm shadow-xl">
             <p class="font-medium text-(--color-text)">Notifications</p>
             <p class="mt-2 text-(--color-text-muted)">You're all caught up.</p>
           </div>
@@ -84,7 +84,7 @@ import { StoreContextService } from '../../core/store-context.service';
           </div>
         </button>
         @if (userOpen()) {
-          <div class="card absolute top-10 right-0 w-56 p-1.5 text-sm shadow-xl">
+          <div class="card absolute top-10 right-0 z-50 w-56 p-1.5 text-sm shadow-xl">
             <div class="px-2.5 py-2">
               <p class="truncate font-medium text-(--color-text)">{{ auth.user()?.name }}</p>
               <p class="truncate text-xs text-(--color-text-muted)">{{ auth.user()?.email }}</p>

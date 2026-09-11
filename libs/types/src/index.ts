@@ -582,4 +582,7 @@ export interface DashboardStats {
   topProducts: { productId: ID; name: string; units: number; revenue: number }[];
   orderStatusBreakdown: { status: OrderStatus; count: number }[];
   recentOrders: Order[];
+  /** % change vs the prior 30-day period; null when there's no baseline to compare against. */
+  revenueChangePercent: number | null;
+  ordersChangePercent: number | null;
 }

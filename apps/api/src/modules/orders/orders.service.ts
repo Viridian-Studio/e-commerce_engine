@@ -147,6 +147,16 @@ export class OrdersService {
     return agg ? roundMoney(agg.total) : 0;
   }
 
+  async revenueInRange(storeId: string, since: Date, until: Date): Promise<{ revenue: number; orders: number }> {
+    const [agg] = await this.model
+      .aggregate<{ revenue: number; orders: number }>([
+        { $match: { storeId, paymentStatus: 'paid', createdAt: { $gte: since, $lt: until } } },
+        { $group: { _id: null, revenue: { $sum: '$totals.total' }, orders: { $sum: 1 } } },
+      ])
+      .exec();
+    return { revenue: agg ? roundMoney(agg.revenue) : 0, orders: agg?.orders ?? 0 };
+  }
+
   async recentOrders(storeId: string, limit: number): Promise<OrderType[]> {
     const items = await this.model.find({ storeId }).sort({ createdAt: -1 }).limit(limit).exec();
     return items.map((i) => i.toJSON<OrderType>());
