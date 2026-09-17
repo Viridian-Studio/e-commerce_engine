@@ -114,6 +114,53 @@
 
         <!-- Appearance -->
         @if (activeTab() === 'appearance') {
+          <!-- Storefront template -->
+          <div>
+            <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Storefront sablon</p>
+            <p class="mb-3 text-xs text-(--color-text-muted)">
+              A sablon a bolt <em>szerkezetét</em> adja: fejléc, nyitóoldal felépítése, terméklista sűrűsége. A lenti színek és betűtípusok ezen felül érvényesülnek.
+            </p>
+            <div class="grid gap-3 sm:grid-cols-3">
+              @for (template of templatePresets; track template.id) {
+                <button
+                  type="button"
+                  class="rounded-lg border p-3 text-left transition-colors"
+                  [class.border-(--color-brand)]="form().templateId === template.id"
+                  [class.bg-(--color-brand-soft)]="form().templateId === template.id"
+                  [class.border-(--color-border)]="form().templateId !== template.id"
+                  (click)="applyTemplate(template.id)"
+                >
+                  <!-- Miniature of the template's own palette and density. -->
+                  <span
+                    class="mb-2 flex h-14 w-full flex-col justify-between overflow-hidden rounded p-1.5"
+                    [style.background]="template.preset.appearance === 'dark' ? '#0f0f11' : '#f2f4f8'"
+                  >
+                    <span class="flex items-center gap-1">
+                      <span class="h-1.5 w-6 rounded-full" [style.background]="template.preset.primaryColor"></span>
+                      <span class="h-1.5 flex-1 rounded-full" [style.background]="template.preset.appearance === 'dark' ? '#2a2a30' : '#d7dce5'"></span>
+                    </span>
+                    <span class="flex gap-1">
+                      @for (cell of cells(template.layout.cols); track cell) {
+                        <span
+                          class="h-7 flex-1"
+                          [style.border-radius]="template.preset.borderRadius + 'px'"
+                          [style.background]="template.preset.appearance === 'dark' ? '#23232a' : '#ffffff'"
+                        ></span>
+                      }
+                    </span>
+                  </span>
+                  <span class="block text-sm font-semibold text-(--color-text)">{{ template.label }}</span>
+                  <span class="mt-1 block text-xs text-(--color-text-muted)">{{ template.description }}</span>
+                </button>
+              }
+            </div>
+            <button
+              type="button"
+              class="mt-3 text-xs font-medium text-(--color-brand) underline"
+              (click)="applyTemplate(form().templateId, true)"
+            >A kiválasztott sablon ajánlott színeinek és betűtípusának betöltése</button>
+          </div>
+
           <!-- Colors -->
           <div>
             <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-(--color-text-faint)">Colors</p>
@@ -363,33 +410,111 @@
               [style.background]="form().announcementBackground || form().primaryColor"
             >{{ form().announcementText }}</div>
           }
-          <!-- Header -->
-          <div class="flex items-center justify-between px-4 py-3" [style.border-bottom]="'1px solid var(--pv-border)'">
-            <span class="text-sm font-bold" [style.font-family]="'var(--pv-heading-font)'">{{ form().name || 'Store name' }}</span>
-            <div
-              class="px-3 py-1.5 text-xs font-semibold text-white"
-              [style.background]="'var(--pv-primary)'"
-              [style.border-radius]="'var(--pv-radius)'"
-            >Shop now</div>
-          </div>
-          <!-- Product card -->
-          <div class="p-4">
-            <div
-              class="p-3"
-              [style.background]="'var(--pv-surface)'"
-              [style.border]="'1px solid var(--pv-border)'"
-              [style.border-radius]="'var(--pv-radius)'"
-            >
-              <div class="mb-3 h-24 rounded" [style.background]="'var(--pv-border)'"></div>
-              <p class="mb-1 text-sm font-semibold" [style.font-family]="'var(--pv-heading-font)'">Product title</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs opacity-70">$49.00</span>
-                <div
-                  class="px-2.5 py-1 text-xs font-medium text-white"
-                  [style.background]="'var(--pv-primary)'"
+          <!-- Header — the template decides whether the store leads with
+               navigation or with a search field and a category bar. -->
+          <div class="px-4 py-3" [style.border-bottom]="'1px solid var(--pv-border)'">
+            <div class="flex items-center gap-3">
+              <span
+                class="shrink-0 text-sm font-bold"
+                [style.font-family]="'var(--pv-heading-font)'"
+                [class.uppercase]="activeTemplate().layout.uppercase"
+              >{{ form().name || 'Store name' }}</span>
+              @if (activeTemplate().layout.header === 'search') {
+                <span
+                  class="flex flex-1 items-center justify-between px-2 py-1.5 text-[10px] opacity-60"
+                  [style.border]="'1px solid var(--pv-border)'"
+                  [style.background]="'var(--pv-surface)'"
                   [style.border-radius]="'var(--pv-radius)'"
-                >Add</div>
+                >
+                  Mit keresel?
+                  <span class="h-4 w-5 shrink-0" [style.background]="'var(--pv-primary)'" [style.border-radius]="'var(--pv-radius)'"></span>
+                </span>
+              } @else {
+                <span class="flex flex-1 items-center justify-center gap-3 text-[10px] font-semibold opacity-70" [class.uppercase]="activeTemplate().layout.uppercase">
+                  <span>Shop</span><span>Brands</span><span>Sale</span>
+                </span>
+              }
+              <span class="flex shrink-0 gap-1">
+                <span class="h-3 w-3 rounded-full opacity-40" [style.background]="'var(--pv-text)'"></span>
+                <span class="h-3 w-3 rounded-full opacity-40" [style.background]="'var(--pv-text)'"></span>
+              </span>
+            </div>
+            @if (activeTemplate().layout.header === 'search') {
+              <div class="mt-2 flex gap-3 text-[10px] opacity-70">
+                <span [style.color]="'var(--pv-primary)'">Összes kategória</span>
+                <span>Kategória</span><span>Kategória</span><span>Akció</span>
               </div>
+            }
+          </div>
+
+          <!-- Hero — split, slim strip, or the megastore rail + banner + promos. -->
+          <div class="p-4">
+            @switch (activeTemplate().layout.hero) {
+              @case ('tiles') {
+                <div class="flex gap-2">
+                  <div class="hidden w-1/5 flex-col gap-1 p-1.5 sm:flex" [style.background]="'var(--pv-surface)'" [style.border]="'1px solid var(--pv-border)'" [style.border-radius]="'var(--pv-radius)'">
+                    @for (row of [1, 2, 3, 4]; track row) {
+                      <span class="h-1.5 w-full rounded-full opacity-25" [style.background]="'var(--pv-text)'"></span>
+                    }
+                  </div>
+                  <div class="flex h-20 flex-1 items-end p-2" [style.background]="'var(--pv-border)'" [style.border-radius]="'var(--pv-radius)'">
+                    <span class="px-2 py-1 text-[9px] font-semibold text-white" [style.background]="'var(--pv-primary)'" [style.border-radius]="'var(--pv-radius)'">Vásárlás</span>
+                  </div>
+                  <div class="flex w-1/4 flex-col gap-2">
+                    <span class="h-9 flex-1" style="background: linear-gradient(135deg, #f43f5e, #b91c1c)" [style.border-radius]="'var(--pv-radius)'"></span>
+                    <span class="h-9 flex-1" style="background: linear-gradient(135deg, #2563eb, #0e7490)" [style.border-radius]="'var(--pv-radius)'"></span>
+                  </div>
+                </div>
+              }
+              @case ('strip') {
+                <div class="flex h-14 items-center px-3" [style.background]="'var(--pv-border)'" [style.border-radius]="'var(--pv-radius)'">
+                  <span class="px-2 py-1 text-[9px] font-semibold text-white" [style.background]="'var(--pv-primary)'" [style.border-radius]="'var(--pv-radius)'">Vásárlás</span>
+                </div>
+              }
+              @default {
+                <div class="flex gap-3">
+                  <div class="flex w-1/2 flex-col justify-center gap-2">
+                    <span class="h-2 w-2/3 rounded-full" [style.background]="'var(--pv-primary)'"></span>
+                    <span class="h-3 w-full rounded-full opacity-70" [style.background]="'var(--pv-text)'"></span>
+                    <span class="h-3 w-4/5 rounded-full opacity-70" [style.background]="'var(--pv-text)'"></span>
+                    <span class="mt-1 w-20 px-2 py-1 text-[9px] font-semibold text-white" [style.background]="'var(--pv-primary)'" [style.border-radius]="'var(--pv-radius)'">Shop now</span>
+                  </div>
+                  <div class="h-24 w-1/2" [style.background]="'var(--pv-border)'"></div>
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Product grid — density and tile style follow the template. -->
+          <div class="px-4 pb-4">
+            <p class="mb-2 text-xs font-semibold" [style.font-family]="'var(--pv-heading-font)'" [class.uppercase]="activeTemplate().layout.uppercase">
+              Kiemelt termékek
+            </p>
+            <div class="grid gap-2" [style.grid-template-columns]="'repeat(' + activeTemplate().layout.cols + ', minmax(0, 1fr))'">
+              @for (cell of previewCells(); track cell) {
+                <div
+                  [class.p-1.5]="activeTemplate().layout.cardSurface"
+                  [style.background]="activeTemplate().layout.cardSurface ? 'var(--pv-surface)' : 'transparent'"
+                  [style.border]="activeTemplate().layout.cardSurface ? '1px solid var(--pv-border)' : 'none'"
+                  [style.border-radius]="'var(--pv-radius)'"
+                >
+                  <div
+                    class="w-full"
+                    [style.aspect-ratio]="activeTemplate().id === 'bold' ? '4 / 5' : '1 / 1'"
+                    [style.background]="'var(--pv-border)'"
+                    [style.border-radius]="'var(--pv-radius)'"
+                  ></div>
+                  <span class="mt-1.5 block h-1.5 w-4/5 rounded-full opacity-50" [style.background]="'var(--pv-text)'"></span>
+                  <span class="mt-1 block h-1.5 w-1/2 rounded-full opacity-30" [style.background]="'var(--pv-text)'"></span>
+                  @if (activeTemplate().layout.cardSurface) {
+                    <span
+                      class="mt-1.5 block h-3 w-full"
+                      [style.background]="'var(--pv-primary)'"
+                      [style.border-radius]="'var(--pv-radius)'"
+                    ></span>
+                  }
+                </div>
+              }
             </div>
           </div>
         </div>

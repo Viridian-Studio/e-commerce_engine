@@ -41,6 +41,21 @@ export interface CampaignBannerContent {
   items: CampaignBannerItem[];
 }
 
+/**
+ * Colourful promo cards used by the catalog-style templates — the two tiles
+ * beside the megastore hero and the promo row that replaces the dark campaign
+ * band. `tone` is a background (gradient or flat colour) rather than a theme
+ * token on purpose: these are campaign creatives, not chrome.
+ */
+export interface PromoTile {
+  label: string;
+  title: string;
+  description: string;
+  tone: string;
+  image: string;
+  cta: { label: string; url: string };
+}
+
 export const HERO_CONTENT: Record<Lang, HeroContent> = {
   hu: {
     eyebrow: 'Új kollekció 2025',
@@ -107,4 +122,59 @@ export const LOOKBOOK_CONTENT: Record<Lang, EditorialContent> = {
     image: 'https://picsum.photos/seed/ultras-lookbook/1600/900',
     cta: { label: 'View Lookbook', url: '/collection/new-arrivals' },
   },
+};
+
+export const PROMO_TILES: Record<Lang, PromoTile[]> = {
+  hu: [
+    {
+      label: 'Heti ajánlat',
+      title: 'Akár -50%',
+      description: 'Kiárusítás a szezon végén',
+      tone: 'linear-gradient(135deg, #f43f5e 0%, #b91c1c 100%)',
+      image: 'https://picsum.photos/seed/promo-sale/600/600',
+      cta: { label: 'Megnézem', url: '/collection/sale' },
+    },
+    {
+      label: 'Újdonság',
+      title: 'Most érkezett',
+      description: 'A legfrissebb darabok egy helyen',
+      tone: 'linear-gradient(135deg, #2563eb 0%, #0e7490 100%)',
+      image: 'https://picsum.photos/seed/promo-new/600/600',
+      cta: { label: 'Felfedezem', url: '/collection/new-arrivals' },
+    },
+    {
+      label: 'Bestseller',
+      title: 'Amit mindenki visz',
+      description: 'A legkeresettebb termékeink',
+      tone: 'linear-gradient(135deg, #059669 0%, #065f46 100%)',
+      image: 'https://picsum.photos/seed/promo-best/600/600',
+      cta: { label: 'Irány a lista', url: '/collection/best-sellers' },
+    },
+  ],
+  en: [
+    {
+      label: 'Deal of the week',
+      title: 'Up to -50%',
+      description: 'End of season clearance',
+      tone: 'linear-gradient(135deg, #f43f5e 0%, #b91c1c 100%)',
+      image: 'https://picsum.photos/seed/promo-sale/600/600',
+      cta: { label: 'Shop deals', url: '/collection/sale' },
+    },
+    {
+      label: 'New in',
+      title: 'Just landed',
+      description: 'The freshest picks in one place',
+      tone: 'linear-gradient(135deg, #2563eb 0%, #0e7490 100%)',
+      image: 'https://picsum.photos/seed/promo-new/600/600',
+      cta: { label: 'Discover', url: '/collection/new-arrivals' },
+    },
+    {
+      label: 'Bestseller',
+      title: 'Everyone is buying',
+      description: 'Our most wanted products',
+      tone: 'linear-gradient(135deg, #059669 0%, #065f46 100%)',
+      image: 'https://picsum.photos/seed/promo-best/600/600',
+      cta: { label: 'See the list', url: '/collection/best-sellers' },
+    },
+  ],
 };

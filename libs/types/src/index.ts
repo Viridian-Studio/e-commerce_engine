@@ -157,7 +157,22 @@ export interface CustomerAuthResponse extends AuthTokens {
 
 export type StoreAppearance = 'dark' | 'light' | 'auto';
 
+/**
+ * Storefront layout template. Picks the structural + stylistic preset the
+ * storefront renders with — type scale, card density, grid width, header
+ * arrangement and homepage section order. The theme tokens below (colors,
+ * fonts, radius) are layered on top and always win over the template's own
+ * defaults, so a template is a starting point, not a lock-in.
+ *
+ * - `bold`   — dark, uppercase, edge-to-edge editorial. Streetwear, merch, sport.
+ * - `market` — light, dense catalog. Search-led header, compact tiles, many SKUs.
+ * - `tech`   — electronics megastore. Search bar + category rail, info-rich tiles.
+ */
+export type StoreTemplateId = 'bold' | 'market' | 'tech';
+
 export interface StoreThemeConfig {
+  /** Layout template the storefront renders with. Defaults to `bold`. */
+  templateId?: StoreTemplateId;
   primaryColor?: string;
   accentColor?: string;
   logoUrl?: string;

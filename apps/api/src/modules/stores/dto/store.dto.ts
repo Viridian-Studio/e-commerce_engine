@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
-import { StoreStatus } from '@ecom/types';
+import { StoreStatus, StoreTemplateId } from '@ecom/types';
 
 export class CreateStoreDto {
   @ApiProperty()
@@ -38,10 +38,11 @@ export class CreateStoreDto {
   @IsString()
   contactEmail?: string;
 
-  @ApiPropertyOptional({ description: 'Store theme: primary/accent colors, logo, favicon, appearance, fonts, radius, announcement' })
+  @ApiPropertyOptional({ description: 'Store theme: layout template, primary/accent colors, logo, favicon, appearance, fonts, radius, announcement' })
   @IsOptional()
   @IsObject()
   theme?: {
+    templateId?: StoreTemplateId;
     primaryColor?: string;
     accentColor?: string;
     logoUrl?: string;

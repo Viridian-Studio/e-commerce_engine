@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import type { StoreAppearance, StoreStatus } from '@ecom/types';
+import type { StoreAppearance, StoreStatus, StoreTemplateId } from '@ecom/types';
 import { StoreService } from '../../../core/services/store.service';
 import { StoreContextService } from '../../../core/store-context.service';
 import { NotificationService } from '../../../core/notification.service';
@@ -21,6 +21,49 @@ const FONT_PRESETS: { label: string; value: string }[] = [
   { label: 'Source Code Pro (mono)', value: "'Source Code Pro', monospace" },
 ];
 
+/**
+ * Storefront layout templates, as the picker presents them — kept in sync with
+ * the storefront's own `core/theme/templates.ts`, which owns the real layout
+ * rules. `preset` mirrors that template's defaults so "apply preset colours"
+ * lands the store on the look the template was designed around.
+ */
+const TEMPLATE_PRESETS: {
+  id: StoreTemplateId;
+  label: string;
+  description: string;
+  preset: { primaryColor: string; accentColor: string; appearance: StoreAppearance; borderRadius: number; fontFamily: string };
+  /** What the live preview draws — mirrors the storefront template's `layout`. */
+  layout: {
+    header: 'nav' | 'search';
+    hero: 'split' | 'strip' | 'tiles';
+    cols: number;
+    cardSurface: boolean;
+    uppercase: boolean;
+  };
+}[] = [
+  {
+    id: 'bold',
+    label: 'Bold',
+    description: 'Sötét, nagybetűs, editorial. Nagy hero, 4 oszlopos rács. Streetwear, merch, sport.',
+    preset: { primaryColor: '#e2141f', accentColor: '#0a0a0a', appearance: 'dark', borderRadius: 0, fontFamily: '' },
+    layout: { header: 'nav', hero: 'split', cols: 3, cardSurface: false, uppercase: true },
+  },
+  {
+    id: 'market',
+    label: 'Market',
+    description: 'Világos, sűrű katalógus. Keresős fejléc, slim banner, 6 oszlopos rács.',
+    preset: { primaryColor: '#1d4ed8', accentColor: '#16181d', appearance: 'light', borderRadius: 4, fontFamily: 'Inter, system-ui, sans-serif' },
+    layout: { header: 'search', hero: 'strip', cols: 4, cardSurface: false, uppercase: false },
+  },
+  {
+    id: 'tech',
+    label: 'Tech áruház',
+    description: 'Alza-stílus: nagy kereső, kategória-sáv és -oldalsáv, kártyás csempék készletinfóval, promo tile-ok.',
+    preset: { primaryColor: '#0f6ab4', accentColor: '#111827', appearance: 'light', borderRadius: 8, fontFamily: 'Inter, system-ui, sans-serif' },
+    layout: { header: 'search', hero: 'tiles', cols: 4, cardSurface: true, uppercase: false },
+  },
+];
+
 type Tab = 'general' | 'appearance' | 'announcement' | 'payments' | 'seo';
 
 interface StoreForm {
@@ -33,6 +76,7 @@ interface StoreForm {
   status: StoreStatus;
   contactEmail: string;
   // Theme
+  templateId: StoreTemplateId;
   primaryColor: string;
   accentColor: string;
   logoUrl: string;
@@ -67,6 +111,7 @@ function emptyForm(): StoreForm {
     timezone: 'UTC',
     status: 'active' as StoreStatus,
     contactEmail: '',
+    templateId: 'bold',
     primaryColor: '#6366f1',
     accentColor: '#111111',
     logoUrl: '',
@@ -105,6 +150,7 @@ export class StoreEditor {
   protected readonly saving = signal(false);
   protected readonly activeTab = signal<Tab>('general');
   protected readonly fontPresets = FONT_PRESETS;
+  protected readonly templatePresets = TEMPLATE_PRESETS;
 
   /** Signal-based form — every field update goes through `patch()` so the
    *  computed `previewStyle` re-evaluates reactively. */
@@ -113,6 +159,30 @@ export class StoreEditor {
   /** Update one or more form fields immutably. */
   protected patch(fields: Partial<StoreForm>): void {
     this.form.update((f) => ({ ...f, ...fields }));
+  }
+
+  /**
+   * Switches template and, on request, adopts its colour/typography preset.
+   * Picking a template alone never overwrites colours the store already set —
+   * the layout changes, the brand stays.
+   */
+  protected applyTemplate(id: StoreTemplateId, withPreset = false): void {
+    const template = TEMPLATE_PRESETS.find((t) => t.id === id);
+    if (!template) return;
+    this.patch(withPreset ? { templateId: id, ...template.preset } : { templateId: id });
+  }
+
+  /** The template the preview draws the *shape* of. */
+  protected readonly activeTemplate = computed(
+    () => TEMPLATE_PRESETS.find((t) => t.id === this.form().templateId) ?? TEMPLATE_PRESETS[0],
+  );
+
+  /** Column placeholders for the preview's product grid. */
+  protected readonly previewCells = computed(() => this.cells(this.activeTemplate().layout.cols));
+
+  /** `n` placeholder cells, for the picker's miniatures. */
+  protected cells(n: number): number[] {
+    return Array.from({ length: n }, (_, i) => i);
   }
 
   /** Live preview CSS variables derived from the form signal. */
@@ -158,6 +228,7 @@ export class StoreEditor {
         timezone: s.timezone,
         status: s.status,
         contactEmail: s.contactEmail ?? '',
+        templateId: s.theme.templateId ?? 'bold',
         primaryColor: s.theme.primaryColor ?? '#6366f1',
         accentColor: s.theme.accentColor ?? '#111111',
         logoUrl: s.theme.logoUrl ?? '',
@@ -204,6 +275,7 @@ export class StoreEditor {
         status: f.status,
         contactEmail: f.contactEmail || undefined,
         theme: {
+          templateId: f.templateId,
           primaryColor: f.primaryColor || undefined,
           accentColor: f.accentColor || undefined,
           logoUrl: f.logoUrl || undefined,

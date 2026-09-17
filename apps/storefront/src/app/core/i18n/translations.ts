@@ -19,6 +19,8 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'nav.cart': 'Kosár',
     'nav.wishlist': 'Kedvencek',
     'nav.menu': 'Menü',
+    'nav.searchPlaceholder': 'Mit keresel? Termék, márka, kategória…',
+    'nav.allCategories': 'Összes kategória',
 
     'footer.join': 'Csatlakozz hozzánk',
     'footer.joinSubtitle': 'Exkluzív hozzáférés az új dobásokhoz és akciókhoz.',
@@ -46,6 +48,8 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'product.shipping': 'Nemzetközi szállítás',
     'product.shippingSub': 'Több mint 100 országba szállítunk',
     'product.addedToCart': 'Kosárba téve',
+    'product.chooseOptions': 'Válassz változatot',
+    'product.inStock': 'Raktáron',
 
     'cart.title': 'Kosarad',
     'cart.empty': 'A kosarad üres',
@@ -99,6 +103,10 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'category.items': 'termék',
     'category.noResults': 'Nincs a szűrésnek megfelelő termék',
 
+    'search.title': 'Keresés',
+    'search.empty': 'Nincs találat',
+    'search.emptyMessage': 'Próbálkozz másik kifejezéssel, vagy böngéssz a kategóriák között.',
+
     'home.featured': 'Kiemelt termékek',
     'home.shopByCategory': 'Vásárolj kategória szerint',
     'home.viewAll': 'Összes megtekintése',
@@ -146,6 +154,8 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'nav.cart': 'Cart',
     'nav.wishlist': 'Wishlist',
     'nav.menu': 'Menu',
+    'nav.searchPlaceholder': 'What are you looking for?',
+    'nav.allCategories': 'All categories',
 
     'footer.join': 'Join the Movement',
     'footer.joinSubtitle': 'Get exclusive access to new drops and special offers.',
@@ -173,6 +183,8 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'product.shipping': 'Worldwide Shipping',
     'product.shippingSub': 'Ship to over 100 countries',
     'product.addedToCart': 'Added to cart',
+    'product.chooseOptions': 'Choose options',
+    'product.inStock': 'In stock',
 
     'cart.title': 'Your Cart',
     'cart.empty': 'Your cart is empty',
@@ -225,6 +237,10 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'category.clearFilters': 'Clear Filters',
     'category.items': 'items',
     'category.noResults': 'No products match your filters',
+
+    'search.title': 'Search',
+    'search.empty': 'No results',
+    'search.emptyMessage': 'Try a different term, or browse the categories instead.',
 
     'home.featured': 'Featured Products',
     'home.shopByCategory': 'Shop by Category',

@@ -34,6 +34,7 @@ export class Store {
 
   @Prop({
     type: {
+      templateId: { type: String, enum: ['bold', 'market', 'tech'], default: 'bold' },
       primaryColor: { type: String },
       accentColor: { type: String },
       logoUrl: { type: String },

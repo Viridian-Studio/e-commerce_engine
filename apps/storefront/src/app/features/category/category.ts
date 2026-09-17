@@ -16,8 +16,8 @@ import { FilterPanel } from './filter-panel/filter-panel';
 import { SortDropdown } from './sort-dropdown/sort-dropdown';
 import type { FacetOption, ListingMode, SiblingLink, SortKey } from '../../models/listing.model';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TemplateService } from '../../core/theme/template.service';
 
-const PAGE_SIZE = 9;
 const FETCH_LIMIT = 200;
 
 @Component({
@@ -42,6 +42,10 @@ export class CategoryPage {
   private readonly categoryService = inject(CategoryService);
   private readonly collectionService = inject(CollectionService);
   private readonly brandService = inject(BrandService);
+  private readonly templates = inject(TemplateService);
+
+  /** How many tiles fill a listing page — a dense template shows far more. */
+  private readonly pageSize = this.templates.layout().pageSize;
 
   readonly slug = input.required<string>();
   readonly mode = input<ListingMode>('category');
@@ -105,11 +109,11 @@ export class CategoryPage {
     return list;
   });
 
-  protected readonly totalPages = computed(() => Math.max(1, Math.ceil(this.filteredProducts().length / PAGE_SIZE)));
+  protected readonly totalPages = computed(() => Math.max(1, Math.ceil(this.filteredProducts().length / this.pageSize)));
 
   protected readonly pageProducts = computed(() => {
     const page = Math.min(this.filters().page, this.totalPages());
-    return this.filteredProducts().slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    return this.filteredProducts().slice((page - 1) * this.pageSize, page * this.pageSize);
   });
 
   constructor() {

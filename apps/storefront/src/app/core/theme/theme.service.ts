@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import type { StoreThemeConfig } from '@ecom/types';
 import { lighten, darken, withAlpha } from './color-utils';
+import { TemplateService } from './template.service';
 
 /** Preset font options — kept in sync with the admin store editor. */
 const FONT_PRESETS: { label: string; value: string; google?: string }[] = [
@@ -25,23 +26,30 @@ const FONT_PRESETS: { label: string; value: string; google?: string }[] = [
  * `accentColor` is the store's base tone — the surface/border/text scale is
  * derived from it. In dark mode it's a near-black base; in light mode it's
  * inverted (the page background becomes light and text becomes dark).
+ *
+ * Anything the store left blank falls back to the active template's defaults,
+ * so picking a template already gives a coherent storefront before a single
+ * color is set.
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+  private readonly templates = inject(TemplateService);
   private currentTheme: StoreThemeConfig | undefined;
   private mediaListener: ((e: MediaQueryListEvent) => void) | null = null;
 
   apply(theme: StoreThemeConfig | undefined): void {
     this.currentTheme = theme;
+    this.templates.apply(theme?.templateId);
     this.applyInternal(theme);
     this.setupAutoListener(theme);
   }
 
   private applyInternal(theme: StoreThemeConfig | undefined): void {
     const root = document.documentElement.style;
-    const primary = theme?.primaryColor || '#e2141f';
-    const accent = theme?.accentColor || '#0a0a0a';
-    const appearance = theme?.appearance || 'dark';
+    const fallback = this.templates.template().defaults;
+    const primary = theme?.primaryColor || fallback.primaryColor;
+    const accent = theme?.accentColor || fallback.accentColor;
+    const appearance = theme?.appearance || fallback.appearance;
     const isDark = appearance === 'dark' || (appearance === 'auto' && this.prefersDark());
 
     // --- Colors ---
@@ -71,8 +79,8 @@ export class ThemeService {
     }
 
     // --- Typography ---
-    const bodyFont = theme?.fontFamily || '';
-    const headingFont = theme?.headingFontFamily || bodyFont || 'inherit';
+    const bodyFont = theme?.fontFamily || fallback.fontFamily;
+    const headingFont = theme?.headingFontFamily || fallback.headingFontFamily || bodyFont || 'inherit';
     if (bodyFont) {
       root.setProperty('--font-sans', bodyFont);
       this.loadGoogleFont(bodyFont);
@@ -85,7 +93,7 @@ export class ThemeService {
     }
 
     // --- Border radius ---
-    const radius = theme?.borderRadius ?? 0;
+    const radius = theme?.borderRadius ?? fallback.borderRadius;
     if (radius < 0) {
       root.setProperty('--radius-store', '9999px');
     } else {
@@ -115,7 +123,9 @@ export class ThemeService {
       window.matchMedia?.('(prefers-color-scheme: dark)').removeEventListener('change', this.mediaListener);
       this.mediaListener = null;
     }
-    if (theme?.appearance !== 'auto') return;
+    // `auto` may come from the store's own theme or from the template default.
+    const appearance = theme?.appearance || this.templates.template().defaults.appearance;
+    if (appearance !== 'auto') return;
     const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
     if (!mq) return;
     this.mediaListener = () => this.applyInternal(this.currentTheme);

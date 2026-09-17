@@ -27,8 +27,105 @@
   --color-store-primary-soft: #e2141f1a;
 }
 
+/* ---------------------------------------------------------------------
+ * Template variables. The theme block above carries a store's *brand*
+ * (colors, fonts); this block carries its *shape* — type scale, control
+ * density, card aspect, grid width, section rhythm. TemplateService puts
+ * the store's template id on <html data-template=...>, so components only
+ * ever read these variables and never branch on a template name.
+ *
+ * `bold` is the baseline defined on :root; every other template overrides
+ * only the variables it actually changes.
+ * ------------------------------------------------------------------- */
 :root {
   color-scheme: dark;
+
+  --tpl-heading-transform: uppercase;
+  --tpl-heading-weight: 800;
+  --tpl-heading-weight-sm: 700;
+  --tpl-heading-tracking: -0.025em;
+
+  --tpl-label-transform: uppercase;
+  --tpl-label-tracking: 0.025em;
+  --tpl-eyebrow-tracking: 0.18em;
+
+  --tpl-btn-py: 0.75rem;
+  --tpl-btn-px: 1.5rem;
+
+  --tpl-card-aspect: 4 / 5;
+  --tpl-cols-base: 2;
+  --tpl-cols-sm: 2;
+  --tpl-cols-lg: 3;
+  --tpl-cols-xl: 4;
+  --tpl-grid-gap: 1rem;
+  --tpl-grid-gap-sm: 1.5rem;
+
+  --tpl-section-py: 3.5rem;
+  --tpl-section-py-sm: 5rem;
+}
+
+/* Catalog template: quieter typography, tighter controls, far denser grid. */
+[data-template='market'] {
+  --tpl-heading-transform: none;
+  --tpl-heading-weight: 700;
+  --tpl-heading-weight-sm: 600;
+  --tpl-heading-tracking: -0.015em;
+
+  --tpl-label-transform: none;
+  --tpl-label-tracking: 0;
+  --tpl-eyebrow-tracking: 0.04em;
+
+  --tpl-btn-py: 0.625rem;
+  --tpl-btn-px: 1.125rem;
+
+  --tpl-card-aspect: 1 / 1;
+  --tpl-cols-base: 2;
+  --tpl-cols-sm: 3;
+  --tpl-cols-lg: 4;
+  --tpl-cols-xl: 6;
+  --tpl-grid-gap: 0.75rem;
+  --tpl-grid-gap-sm: 1rem;
+
+  --tpl-section-py: 2rem;
+  --tpl-section-py-sm: 2.75rem;
+}
+
+/* Megastore template (Alza-style): cool light page, tiles on their own card
+   surface, the densest grid of the three, minimal vertical air. */
+[data-template='tech'] {
+  --color-store-light: #eef1f6;
+  --color-store-light-2: #e2e7ef;
+  --color-store-ink: #0f172a;
+  --color-store-ink-muted: #51607a;
+
+  --tpl-heading-transform: none;
+  --tpl-heading-weight: 700;
+  --tpl-heading-weight-sm: 600;
+  --tpl-heading-tracking: -0.015em;
+
+  --tpl-label-transform: none;
+  --tpl-label-tracking: 0;
+  --tpl-eyebrow-tracking: 0.04em;
+
+  --tpl-btn-py: 0.625rem;
+  --tpl-btn-px: 1.25rem;
+
+  --tpl-card-aspect: 1 / 1;
+  --tpl-cols-base: 2;
+  --tpl-cols-sm: 3;
+  --tpl-cols-lg: 4;
+  --tpl-cols-xl: 5;
+  --tpl-grid-gap: 0.75rem;
+  --tpl-grid-gap-sm: 1rem;
+
+  --tpl-section-py: 1.75rem;
+  --tpl-section-py-sm: 2.5rem;
+
+  /* Tiles sit on a raised white card instead of floating on the page. */
+  --tpl-tile-surface: #ffffff;
+  --tpl-tile-border: 1px solid var(--color-store-border);
+  --tpl-tile-pad: 0.75rem;
+  --tpl-tile-shadow-hover: 0 10px 26px -12px rgba(15, 23, 42, 0.35);
 }
 
 @keyframes fade-up {
@@ -124,44 +221,67 @@ button {
   }
 
   .eyebrow {
-    @apply text-xs font-semibold tracking-[0.18em] uppercase text-(--color-store-primary);
+    @apply text-xs font-semibold text-(--color-store-primary);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-eyebrow-tracking);
   }
 
   .heading-xl {
-    @apply text-4xl leading-[1.05] font-extrabold tracking-tight uppercase sm:text-5xl lg:text-6xl;
+    @apply text-4xl leading-[1.05] sm:text-5xl lg:text-6xl;
     font-family: var(--font-heading);
+    font-weight: var(--tpl-heading-weight);
+    letter-spacing: var(--tpl-heading-tracking);
+    text-transform: var(--tpl-heading-transform);
   }
   .heading-lg {
-    @apply text-2xl leading-tight font-extrabold tracking-tight uppercase sm:text-3xl;
+    @apply text-2xl leading-tight sm:text-3xl;
     font-family: var(--font-heading);
+    font-weight: var(--tpl-heading-weight);
+    letter-spacing: var(--tpl-heading-tracking);
+    text-transform: var(--tpl-heading-transform);
   }
   .heading-md {
-    @apply text-lg font-bold tracking-tight uppercase;
+    @apply text-lg;
     font-family: var(--font-heading);
+    font-weight: var(--tpl-heading-weight-sm);
+    letter-spacing: var(--tpl-heading-tracking);
+    text-transform: var(--tpl-heading-transform);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
-      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+    @apply inline-flex items-center justify-center gap-2 text-sm font-semibold
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
       bg-(--color-store-primary) text-white hover:bg-(--color-store-primary-hover);
+    padding: var(--tpl-btn-py) var(--tpl-btn-px);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
     border-radius: var(--radius-store, 0);
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
-      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+    @apply inline-flex items-center justify-center gap-2 text-sm font-semibold
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-white/70 text-(--color-store-text) hover:border-white hover:bg-white/10;
+    padding: var(--tpl-btn-py) var(--tpl-btn-px);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
     border-radius: var(--radius-store, 0);
   }
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
-      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+    @apply inline-flex items-center justify-center gap-2 text-sm font-semibold
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-(--color-store-border) bg-black text-white hover:bg-(--color-store-surface-2);
+    padding: var(--tpl-btn-py) var(--tpl-btn-px);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
     border-radius: var(--radius-store, 0);
   }
   .btn-outline-ink {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold
-      tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50
+    @apply inline-flex items-center justify-center gap-2 text-sm font-semibold
+      transition-colors disabled:cursor-not-allowed disabled:opacity-50
       border border-(--color-store-ink)/30 text-(--color-store-ink) hover:bg-black/5;
+    padding: var(--tpl-btn-py) var(--tpl-btn-px);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
     border-radius: var(--radius-store, 0);
   }
 
@@ -170,14 +290,22 @@ button {
   }
 
   .badge-new {
-    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold tracking-wide uppercase text-white bg-(--color-store-primary);
+    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold text-white bg-(--color-store-primary);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
+    border-radius: var(--radius-store, 0);
   }
   .badge-sale {
-    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold tracking-wide uppercase text-white bg-black;
+    @apply inline-flex items-center px-2 py-1 text-[11px] font-bold text-white bg-black;
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
+    border-radius: var(--radius-store, 0);
   }
 
   .field-label {
-    @apply mb-1.5 block text-xs font-semibold tracking-wide uppercase text-(--color-store-text-muted);
+    @apply mb-1.5 block text-xs font-semibold text-(--color-store-text-muted);
+    text-transform: var(--tpl-label-transform);
+    letter-spacing: var(--tpl-label-tracking);
   }
   .field-input {
     @apply w-full border border-(--color-store-border) bg-(--color-store-surface-2) px-3 py-2.5 text-sm text-(--color-store-text)
@@ -188,6 +316,69 @@ button {
   .field-input-light {
     @apply w-full border border-black/15 bg-white px-3 py-2.5 text-sm text-(--color-store-ink)
       outline-none transition-colors placeholder:text-black/40 focus:border-(--color-store-ink);
+    border-radius: var(--radius-store, 0);
+  }
+
+  /* Vertical rhythm for content sections — the template decides how much
+     air a store breathes. */
+  .section-pad {
+    padding-block: var(--tpl-section-py);
+  }
+  @media (min-width: 640px) {
+    .section-pad {
+      padding-block: var(--tpl-section-py-sm);
+    }
+  }
+
+  /* The single product grid used by the homepage, listings and search. Column
+     counts come from the template, so a catalog store gets 6 across where an
+     editorial one gets 4. */
+  .grid-products {
+    display: grid;
+    gap: var(--tpl-grid-gap);
+    grid-template-columns: repeat(var(--tpl-cols-base), minmax(0, 1fr));
+  }
+  @media (min-width: 640px) {
+    .grid-products {
+      gap: var(--tpl-grid-gap-sm);
+      grid-template-columns: repeat(var(--tpl-cols-sm), minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid-products {
+      grid-template-columns: repeat(var(--tpl-cols-lg), minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1280px) {
+    .grid-products {
+      grid-template-columns: repeat(var(--tpl-cols-xl), minmax(0, 1fr));
+    }
+  }
+
+  /* Product tile image frame — 4:5 portrait for editorial, square for catalog. */
+  .card-media {
+    aspect-ratio: var(--tpl-card-aspect);
+  }
+
+  /* Optional card surface behind a product tile. Templates that leave the
+     tile variables unset (editorial ones) get a plain, borderless tile —
+     the rule stays inert instead of needing a second component. */
+  .card-tile {
+    background: var(--tpl-tile-surface, transparent);
+    border: var(--tpl-tile-border, 0 solid transparent);
+    padding: var(--tpl-tile-pad, 0);
+    border-radius: var(--radius-store, 0);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .card-tile:hover {
+    box-shadow: var(--tpl-tile-shadow-hover, none);
+  }
+
+  /* Header search field — the megastore/catalog templates lead with it. */
+  .search-field {
+    @apply w-full border border-(--color-store-border) bg-(--color-store-surface) py-2.5 pl-4 pr-12 text-sm
+      text-(--color-store-text) outline-none transition-colors
+      placeholder:text-(--color-store-text-faint) focus:border-(--color-store-primary);
     border-radius: var(--radius-store, 0);
   }
 

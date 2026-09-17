@@ -3,10 +3,10 @@ import { Component, computed, input } from '@angular/core';
 @Component({
   selector: 'app-product-grid-skeleton',
   template: `
-    <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+    <div class="grid-products">
       @for (i of items(); track i) {
         <div class="animate-pulse">
-          <div class="aspect-[4/5] bg-(--color-store-surface-2)"></div>
+          <div class="card-media bg-(--color-store-surface-2)"></div>
           <div class="mt-3 h-3 w-3/4 bg-(--color-store-surface-2)"></div>
           <div class="mt-2 h-3 w-1/3 bg-(--color-store-surface-2)"></div>
         </div>

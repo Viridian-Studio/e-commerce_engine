@@ -43,8 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'search',
-        loadComponent: () => import('./shared/components/coming-soon/coming-soon').then((m) => m.ComingSoon),
-        data: { title: 'Keresés', message: 'A termékkeresés a következő frissítésben érkezik.' },
+        loadComponent: () => import('./features/search/search').then((m) => m.SearchPage),
       },
       {
         path: 'login',

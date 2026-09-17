@@ -10,7 +10,7 @@
 </div>
 
 <header class="section-dark sticky top-0 z-40 border-b border-(--color-store-border)">
-  <div class="container-store flex items-center justify-between py-4">
+  <div class="container-store flex items-center justify-between gap-4 py-4">
     <div class="flex items-center gap-3">
       <button
         type="button"
@@ -31,38 +31,66 @@
       </a>
     </div>
 
-    <nav class="hidden items-center gap-7 text-xs font-semibold tracking-wide uppercase lg:flex">
-      <a routerLink="/" routerLinkActive="text-(--color-store-primary)" [routerLinkActiveOptions]="{ exact: true }" class="hover:text-(--color-store-primary)">{{ 'nav.home' | t }}</a>
-      @for (top of categoryTree(); track top._id) {
-        @if (top.children.length > 0) {
-          <div class="group relative py-2">
-            <button type="button" class="flex items-center gap-1 hover:text-(--color-store-primary)">
-              {{ top.name }}
-              <svg viewBox="0 0 24 24" fill="none" class="h-3 w-3"><path stroke="currentColor" stroke-width="2" d="m6 9 6 6 6-6" /></svg>
-            </button>
-            <div class="section-dark invisible absolute top-full left-0 flex min-w-44 flex-col gap-1 border border-(--color-store-border) p-3 opacity-0 shadow-xl transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              @for (child of top.children; track child._id) {
-                <a [routerLink]="['/category', child.slug]" class="px-2 py-1.5 text-[11px] normal-case tracking-normal text-(--color-store-text-muted) hover:text-(--color-store-text)">
-                  {{ child.name }}
-                </a>
-              }
+    @if (searchLed()) {
+      <!-- Catalog templates lead with search: the field takes the space the
+           category navigation occupies in the editorial header. -->
+      <form class="relative hidden max-w-2xl flex-1 md:block" (ngSubmit)="submitSearch()">
+        <input
+          type="search"
+          name="q"
+          class="search-field"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          [placeholder]="'nav.searchPlaceholder' | t"
+          [attr.aria-label]="'nav.search' | t"
+        />
+        <button
+          type="submit"
+          class="absolute top-1/2 right-1.5 flex h-8 w-9 -translate-y-1/2 items-center justify-center bg-(--color-store-primary) text-white"
+          [style.border-radius]="'var(--radius-store, 0)'"
+          [attr.aria-label]="'nav.search' | t"
+        >
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+            <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          </svg>
+        </button>
+      </form>
+    } @else {
+      <nav class="hidden items-center gap-7 text-xs font-semibold tracking-wide uppercase lg:flex">
+        <a routerLink="/" routerLinkActive="text-(--color-store-primary)" [routerLinkActiveOptions]="{ exact: true }" class="hover:text-(--color-store-primary)">{{ 'nav.home' | t }}</a>
+        @for (top of categoryTree(); track top._id) {
+          @if (top.children.length > 0) {
+            <div class="group relative py-2">
+              <button type="button" class="flex items-center gap-1 hover:text-(--color-store-primary)">
+                {{ top.name }}
+                <svg viewBox="0 0 24 24" fill="none" class="h-3 w-3"><path stroke="currentColor" stroke-width="2" d="m6 9 6 6 6-6" /></svg>
+              </button>
+              <div class="section-dark invisible absolute top-full left-0 flex min-w-44 flex-col gap-1 border border-(--color-store-border) p-3 opacity-0 shadow-xl transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                @for (child of top.children; track child._id) {
+                  <a [routerLink]="['/category', child.slug]" class="px-2 py-1.5 text-[11px] normal-case tracking-normal text-(--color-store-text-muted) hover:text-(--color-store-text)">
+                    {{ child.name }}
+                  </a>
+                }
+              </div>
             </div>
-          </div>
-        } @else {
-          <a [routerLink]="['/category', top.slug]" class="hover:text-(--color-store-primary)">{{ top.name }}</a>
+          } @else {
+            <a [routerLink]="['/category', top.slug]" class="hover:text-(--color-store-primary)">{{ top.name }}</a>
+          }
         }
-      }
-      <a routerLink="/brands" class="hover:text-(--color-store-primary)">{{ 'nav.brands' | t }}</a>
-      <a [routerLink]="['/collection', 'sale']" class="text-(--color-store-primary)">{{ 'nav.sale' | t }}</a>
-      <a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-primary)">{{ 'nav.newArrivals' | t }}</a>
-    </nav>
+        <a routerLink="/brands" class="hover:text-(--color-store-primary)">{{ 'nav.brands' | t }}</a>
+        <a [routerLink]="['/collection', 'sale']" class="text-(--color-store-primary)">{{ 'nav.sale' | t }}</a>
+        <a [routerLink]="['/collection', 'new-arrivals']" class="hover:text-(--color-store-primary)">{{ 'nav.newArrivals' | t }}</a>
+      </nav>
+    }
 
     <div class="flex items-center gap-1">
-      <a routerLink="/search" class="icon-btn" [attr.aria-label]="'nav.search' | t">
-        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
-          <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
-        </svg>
-      </a>
+      @if (!searchLed()) {
+        <a routerLink="/search" class="icon-btn" [attr.aria-label]="'nav.search' | t">
+          <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
+            <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          </svg>
+        </a>
+      }
       <a routerLink="/wishlist" class="icon-btn relative" [attr.aria-label]="'nav.wishlist' | t">
         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5">
           <path
@@ -109,6 +137,85 @@
       </button>
     </div>
   </div>
+
+  @if (searchLed()) {
+    <!-- The search field moves to its own row below the logo on phones. -->
+    <div class="container-store pb-3 md:hidden">
+      <form class="relative" (ngSubmit)="submitSearch()">
+        <input
+          type="search"
+          name="qMobile"
+          class="search-field"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          [placeholder]="'nav.searchPlaceholder' | t"
+          [attr.aria-label]="'nav.search' | t"
+        />
+        <button
+          type="submit"
+          class="absolute top-1/2 right-1.5 flex h-8 w-9 -translate-y-1/2 items-center justify-center bg-(--color-store-primary) text-white"
+          [style.border-radius]="'var(--radius-store, 0)'"
+          [attr.aria-label]="'nav.search' | t"
+        >
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+            <path stroke="currentColor" stroke-width="1.8" d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Category bar: the all-categories panel plus the top level as a
+         scrollable strip, the way a large catalog store navigates. -->
+    <div class="relative hidden border-t border-(--color-store-border) lg:block">
+      <div class="container-store flex items-center gap-1 py-1.5 text-sm">
+        <button
+          type="button"
+          class="flex items-center gap-2 px-3 py-2 font-semibold text-(--color-store-primary) hover:bg-(--color-store-surface)"
+          [style.border-radius]="'var(--radius-store, 0)'"
+          [attr.aria-expanded]="categoryPanelOpen()"
+          (click)="categoryPanelOpen.set(!categoryPanelOpen())"
+        >
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+            <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          {{ 'nav.allCategories' | t }}
+        </button>
+        @for (top of categoryTree(); track top._id) {
+          <a
+            [routerLink]="['/category', top.slug]"
+            class="px-3 py-2 whitespace-nowrap text-(--color-store-text-muted) hover:text-(--color-store-primary)"
+          >{{ top.name }}</a>
+        }
+        <a [routerLink]="['/collection', 'sale']" class="px-3 py-2 font-semibold whitespace-nowrap text-(--color-store-primary)">{{ 'nav.sale' | t }}</a>
+        <a routerLink="/brands" class="px-3 py-2 whitespace-nowrap text-(--color-store-text-muted) hover:text-(--color-store-primary)">{{ 'nav.brands' | t }}</a>
+      </div>
+
+      @if (categoryPanelOpen()) {
+        <!-- Click anywhere outside to dismiss; Escape does the same. -->
+        <div class="fixed inset-0 z-20" aria-hidden="true" (click)="categoryPanelOpen.set(false)"></div>
+        <div class="section-dark absolute inset-x-0 top-full z-30 border-y border-(--color-store-border) shadow-xl">
+          <div class="container-store grid grid-cols-2 gap-6 py-6 lg:grid-cols-4">
+            @for (top of categoryTree(); track top._id) {
+              <div>
+                <a
+                  [routerLink]="['/category', top.slug]"
+                  class="mb-2 block text-sm font-semibold hover:text-(--color-store-primary)"
+                  (click)="categoryPanelOpen.set(false)"
+                >{{ top.name }}</a>
+                @for (child of top.children; track child._id) {
+                  <a
+                    [routerLink]="['/category', child.slug]"
+                    class="block py-1 text-xs text-(--color-store-text-muted) hover:text-(--color-store-primary)"
+                    (click)="categoryPanelOpen.set(false)"
+                  >{{ child.name }}</a>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
 </header>
 
 <app-mobile-menu [categoryTree]="categoryTree()" [open]="mobileMenuOpen()" (closed)="mobileMenuOpen.set(false)" />
